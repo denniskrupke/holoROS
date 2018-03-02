@@ -1,3 +1,4 @@
+
 #if WINDOWS_UWP
 using System;
 using RosMessages;
@@ -8,7 +9,7 @@ namespace RosInt32Coder
 {
     public static class RosInt32Coder_
     {
-        public static RosMessages.Int32 deserializeSingleInt32(JsonObject jint32)
+        public static RosMessages.Int32 deserializeSimple(JsonObject jint32)
         {
             double doubleint = jint32["data"].GetNumber();
 			int integer32 = (int) doubleint;
@@ -19,7 +20,7 @@ namespace RosInt32Coder
             return int32Object;
         }
 
-        public static string serializeSingleInt32(RosMessages.Int32 integer32)
+        public static string serializeSimple(RosMessages.Int32 integer32)
         {
             return "{\"int32\": {\"data\": " + integer32.data + "}";
         } 

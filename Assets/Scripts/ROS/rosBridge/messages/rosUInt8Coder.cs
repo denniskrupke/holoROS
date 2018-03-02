@@ -8,7 +8,7 @@ namespace RosUInt8Coder
 {
     public static class RosInt8Coder_
     {
-        public static UInt8 deserializeSingleInt8(JsonObject juint8)
+        public static UInt8 deserializeSimple(JsonObject juint8)
         {
 			//evtl ändern in String -> sbyte, da floatingpointfehler
             double doublebyte = juint8["data"].GetNumber();
@@ -20,7 +20,7 @@ namespace RosUInt8Coder
             return uint8Object;
         }
 
-        public static string serializeSingleInt8(UInt8 uinteger8)
+        public static string serializeSimple(UInt8 uinteger8)
         {
             return "{\"uint8\": {\"data\": " + uinteger8.data + "}";
         } 

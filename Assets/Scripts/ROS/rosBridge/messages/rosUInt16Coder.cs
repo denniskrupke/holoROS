@@ -8,7 +8,7 @@ namespace RosUInt16Coder
 {
     public static class RosUInt16Coder_
     {
-        public static RosMessages.UInt16 deserializeSingleUInt64(JsonObject juint16)
+        public static RosMessages.UInt16 deserializeSimple(JsonObject juint16)
         {
 			//evtl ändern in String -> short, da floatingpointfehler
             double doubleushort = juint16["data"].GetNumber();
@@ -20,7 +20,7 @@ namespace RosUInt16Coder
             return uint16Object;
         }
 
-        public static string serializeSingleUInt16(RosMessages.UInt16 uinteger16)
+        public static string serializeSimple(RosMessages.UInt16 uinteger16)
         {
             return "{\"uint16\": {\"data\": " + uinteger16.data + "}";
         } 

@@ -23,6 +23,7 @@ using Windows.Data.Json;
 using RosMessages;
 using RosJointStateCoder;
 using RosJointTrajectoryCoder;
+using Config;
 
 #else
 using Newtonsoft.Json;
@@ -48,6 +49,7 @@ namespace RosBridge_old
 
 
 #if WINDOWS_UWP        
+        private JointState latestJointState;
 #else
         //private static WebSocket rosBridgeWebSocket = null;
 #endif
@@ -57,7 +59,7 @@ namespace RosBridge_old
         private static bool verbose;
 
         private CompressedImage_old latestImage;
-        private JointState_old latestJointState;
+        
         private Vector3 latestHandPosition = new Vector3(0.0f,0.0f,0.0f);
         private Vector3 latestHandPointingDirection = new Vector3(0.0f, 1.0f, 0.0f);
         private Quaternion latestHandRotation = new Quaternion();
@@ -137,7 +139,10 @@ namespace RosBridge_old
             RosBridgeClient_old.handTrackingAprilTags = handTrackingAprilTags;
 
             latestImage = new CompressedImage_old();                // Storage for latest incoming image message
-            latestJointState = new JointState_old();               // Storage for latest incoming jointState	
+            //latestJointState = new JointState_old();               // Storage for latest incoming jointState	
+#if WINDOWS_UWP
+            latestJointState = new JointState();               // Storage for latest incoming jointState	
+#endif
             rosMessageStrings = new Queue<string>();			// Incoming message queue
             rosCommandQueue = new Queue<RosMessage_old>();          // Outgoing message queue
 
@@ -584,12 +589,18 @@ namespace RosBridge_old
                     //lock (syncObjMessageQueue)
                     {
                         //MaybeLog ("Dequeue...");                    
-                       
-                    this.DeserializeJSONstringHard(rosMessageStrings.Dequeue());
-                    //this.messageCount += 1;
+
+                        //this.DeserializeJSONstringHard(rosMessageStrings.Dequeue());
+                        //this.messageCount += 1;
 #if WINDOWS_UWP
                         //                        TODO: mertke
-                        //this.latestJointState = (JointState_old)this.DeserializeJSONstring(rosMessageStrings.Dequeue());
+                        RosMessage msg = DeserializeJSONstring(rosMessageStrings.Dequeue());
+                        if(msg != null){
+                          //this.latestJointState
+                        var message = msg as RosPublish;
+                        this.latestJointState = (JointState)message.msg;
+                        }
+
 #endif
                     }
                 }
@@ -856,65 +867,62 @@ namespace RosBridge_old
         }
 
 #if WINDOWS_UWP
-        // hier wird einfach hart-gecoded eine JointState-Nachricht deserialisiert
-        public RosMessage DeserializeJSONstring(string message)
+        // Schnittstelle des Parsers. Hier wird die Deserialisierung aufgerufen.
+    public RosMessage DeserializeJSONstring(string message)
+    {
+        JsonObject jsonObject = JsonObject.Parse(message);
+        string jtopic = jsonObject["topic"].GetString();
+        rosComplexCoder coder = null;
+        if (parserConfig.getJointStateTopics().Contains(jtopic))
         {
-
-            JsonObject jsonObject = JsonObject.Parse(message);
-            string jtopic = jsonObject["topic"].GetString();
-            rosComplexCoder coder = null;
-            switch (jtopic)
-            {
-                case "/joint_states":
-                    coder = new RosJointStateCoder_();
-                    return coder.startDeserializing(jsonObject);
-
-                case "/preview_trajectory":
-                    coder = new RosJointTrajectoryCoder_();
-                    return coder.startDeserializing(jsonObject);
-
-                default:
-                    return null;
-            }
+            coder = new RosJointStateCoderParallel();
+            return coder.startDeserializing(jsonObject);
         }
-
-        
-        // die andere Richtung wäre auch schön, damit man auch Nachrichten an ROS senden kann
-        public string SerializeROSmessage(RosMessage message)
+        else if (parserConfig.getJointTrajectoryTopics().Contains(jtopic))
         {
-            //todo
+            coder = new RosJointTrajectoryCoder_();
+            return coder.startDeserializing(jsonObject);
+        }
+        else
+        {
+            return null;
+        }
+    }
 
-            if (message.GetType() == typeof(RosPublish))
+    // Schnittstelle des Parsers. Hier wird die Serialisierung aufgerufen.
+    public string SerializeROSmessage(RosMessage message)
+    {
+
+        if (message.GetType() == typeof(RosPublish))
+        {
+            rosComplexCoder coder = null;
+            if (parserConfig.getJointStateTopics().Contains(message.topic))
             {
-                rosComplexCoder coder = null;
-                switch (message.topic)
-                {
-                    case "\"/joint_states\"":
-                        coder = new RosJointStateCoder_();
-                        return coder.startSerializing(message);
-
-                    case "\"/preview_trajectory\"":
-                        coder = new RosJointTrajectoryCoder_();
-                        return coder.startSerializing(message);
-
-                    default:
-                        return null;
-                }
+                coder = new RosJointStateCoderSeriell();
+                return coder.startSerializing(message);
+            }
+            else if (parserConfig.getJointTrajectoryTopics().Contains(message.topic))
+            {
+                coder = new RosJointTrajectoryCoder_();
+                return coder.startSerializing(message);
             }
             else
             {
                 return null;
             }
         }
+        return null;
+    }
 #endif
 
         public CompressedImage_old GetLatestImage(){
 			return latestImage;
 		}
-
-		public JointState_old GetLatestJoinState (){
+#if WINDOWS_UWP
+		public JointState GetLatestJoinState (){
 			return latestJointState;
 		}
+#endif
 
         public Vector3 GetLatestHandPosition()
         {

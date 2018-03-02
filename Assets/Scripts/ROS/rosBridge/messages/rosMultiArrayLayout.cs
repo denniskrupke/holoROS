@@ -8,13 +8,13 @@ namespace RosMultiArrayLayoutCoder
 {
     public static class RosMultiArrayLayoutCoder_
     {
-        public static MultiArrayLayout deserializeSingleMultiArrayLayout(JsonObject jmultiArrayLayout)
+        public static MultiArrayLayout deserializeSimple(JsonObject jmultiArrayLayout)
         {
  
             return null;
         }
 
-        public static string serializeSingleMultiArrayLayout(MultiArrayLayout mal)
+        public static string serializeSimple(MultiArrayLayout mal)
         {
             return null;
          //  return "{\"multiarraydimension\": {\"label\": " + mad.label + ", \"size\": " + mad.size + ", \"stride\": " + mad.stride + "}";

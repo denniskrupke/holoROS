@@ -9,7 +9,6 @@ namespace RosHeaderCoder
 {
     public static class RosHeaderCoder_
     {
-
         public static Header deserializeSingleHeader(JsonValue jheader)
         {
             // baue den Header
@@ -29,7 +28,7 @@ namespace RosHeaderCoder
             JsonObject jstamp = jsonHeader["stamp"].GetObject();
 
             // baue den Header zusammen
-            header.stamp = RosStampCoder_.deserializeSingleStamp(jstamp);
+            header.stamp = RosStampCoder_.deserializeSimple(jstamp);
             header.frame_id = jframe_id;
             header.seq = (int)d;
             return header;
@@ -37,7 +36,7 @@ namespace RosHeaderCoder
 
         public static string serializeSingleHeader(Header header)
         {
-            string stampString = RosStampCoder_.serializeSingleStamp(header.stamp);
+            string stampString = RosStampCoder_.serializeSimple(header.stamp);
             string frame_id = header.frame_id;
             int seq = header.seq;
             string headerString = baueHeaderString(stampString, frame_id, seq);
@@ -50,4 +49,5 @@ namespace RosHeaderCoder
         }
     }
 }
+
 #endif

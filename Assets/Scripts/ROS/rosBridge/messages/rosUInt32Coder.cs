@@ -8,7 +8,7 @@ namespace RosUInt32Coder
 {
     public static class RosUInt32Coder_
     {
-        public static RosMessages.UInt32 deserializeSingleUInt32(JsonObject juint32)
+        public static RosMessages.UInt32 deserializeSimple(JsonObject juint32)
         {
             double doubleuint = juint32["data"].GetNumber();
 			uint uinteger32 = (uint) doubleuint;
@@ -19,7 +19,7 @@ namespace RosUInt32Coder
             return uint32Object;
         }
 
-        public static string serializeSingleUInt32(RosMessages.UInt32 uinteger32)
+        public static string serializeSimple(RosMessages.UInt32 uinteger32)
         {
             return "{\"uint32\": {\"data\": " + uinteger32.data + "}";
         } 

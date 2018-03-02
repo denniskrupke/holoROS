@@ -8,7 +8,7 @@ namespace RosUInt64Coder
 {
     public static class RosUInt64Coder_
     {
-        public static RosMessages.UInt64 deserializeSingleUInt64(JsonObject juint64)
+        public static RosMessages.UInt64 deserializeSimple(JsonObject juint64)
         {
 			//evtl ändern in String -> long, da floatingpointfehler
             double doubleulong = juint64["data"].GetNumber();
@@ -20,7 +20,7 @@ namespace RosUInt64Coder
             return uint64Object;
         }
 
-        public static string serializeSingleUInt64(RosMessages.UInt64 uinteger64)
+        public static string serializeSimple(RosMessages.UInt64 uinteger64)
         {
             return "{\"uint64\": {\"data\": " + uinteger64.data + "}";
         } 

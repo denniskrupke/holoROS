@@ -3,59 +3,58 @@ using Windows.Data.Json;
 using RosMessages;
 using RosJointStateCoder;
 using RosJointTrajectoryCoder;
+using Config;
 
 class RosBridgeClient {
 
     public RosBridgeClient(){
     }
 
-    // hier wird einfach hart-gecoded eine JointState-Nachricht deserialisiert
+    // Schnittstelle des Parsers. Hier wird die Deserialisierung aufgerufen.
     public RosMessage DeserializeJSONstring(string message)
     {
-
         JsonObject jsonObject = JsonObject.Parse(message);
         string jtopic = jsonObject["topic"].GetString();
         rosComplexCoder coder = null;
-        switch (jtopic)
+        if (parserConfig.getJointStateTopics().Contains(jtopic))
         {
-            case "/joint_states":
-            coder = new RosJointStateCoder_();
+            coder = new RosJointStateCoderParallel();
             return coder.startDeserializing(jsonObject);
-
-            case "/preview_trajectory":
+        }
+        else if (parserConfig.getJointTrajectoryTopics().Contains(jtopic))
+        {
             coder = new RosJointTrajectoryCoder_();
             return coder.startDeserializing(jsonObject);
-
-            default:
-                return null;
-        }
-    }
-
-    // die andere Richtung wäre auch schön, damit man auch Nachrichten an ROS senden kann
-    public string SerializeROSmessage(RosMessage message){
-        //todo
-        
-        if (message.GetType() == typeof(RosPublish))
-        {
-            rosComplexCoder coder = null;
-            switch (message.topic)
-            {
-                case "\"/joint_states\"":
-                    coder = new RosJointStateCoder_();
-                    return coder.startSerializing(message);
-
-                case "\"/preview_trajectory\"":
-                coder = new RosJointTrajectoryCoder_();
-                    return coder.startSerializing(message);
-
-                default:
-                    return null;
-            }
         }
         else
         {
             return null;
         }
+    }
+
+    // Schnittstelle des Parsers. Hier wird die Serialisierung aufgerufen.
+    public string SerializeROSmessage(RosMessage message)
+    {
+
+        if (message.GetType() == typeof(RosPublish))
+        {
+            rosComplexCoder coder = null;
+            if (parserConfig.getJointStateTopics().Contains(message.topic))
+            {
+                coder = new RosJointStateCoderSeriell();
+                return coder.startSerializing(message);
+            }
+            else if (parserConfig.getJointTrajectoryTopics().Contains(message.topic))
+            {
+                coder = new RosJointTrajectoryCoder_();
+                return coder.startSerializing(message);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        return null;
     }
 
 }

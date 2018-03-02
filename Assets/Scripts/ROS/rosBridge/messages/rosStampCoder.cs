@@ -8,7 +8,7 @@ namespace RosStampCoder
 {
     public static class RosStampCoder_
     {
-        public static Stamp deserializeSingleStamp(JsonObject jstamp)
+        public static Stamp deserializeSimple(JsonObject jstamp)
         {
             double stampSecs = jstamp["secs"].GetNumber();
             double stampNsecs = jstamp["nsecs"].GetNumber();
@@ -20,7 +20,7 @@ namespace RosStampCoder
             return stamp;
         }
 
-        public static string serializeSingleStamp(Stamp stamp)
+        public static string serializeSimple(Stamp stamp)
         {
             return "\"stamp\": {\"secs\": " + stamp.secs + ", \"nsecs\": " + stamp.nsecs + "}";
         } 

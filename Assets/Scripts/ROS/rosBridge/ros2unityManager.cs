@@ -126,6 +126,7 @@ public class ros2unityManager : MonoBehaviour {
 	// for efficiency reasons, motion of the robot joints and updates of the streamed video are done with 30 FPS
 	void FixedUpdate(){
         this.statusHUD.text = ""+rosBridge.messageCount;
+#if WINDOWS_UWP
         if (robotControl != null && rosBridge.GetLatestJoinState() != null && rosBridge.GetLatestJoinState().name != null)
         {
             //debugHUD.text = "\n Try to update robot control values." + debugHUD.text;
@@ -134,6 +135,7 @@ public class ros2unityManager : MonoBehaviour {
             // gripperControl.Names = rosBridge.GetLatestJoinState().name;
             // gripperControl.Angles = rosBridge.GetLatestJoinState().position;
         }
+#endif
         // if (count == 0) debugHUD.text = "";
         /* if (robotControl != null && rosBridge.GetLatestJoinState() != null && rosBridge.GetLatestJoinState().name != null)
          {

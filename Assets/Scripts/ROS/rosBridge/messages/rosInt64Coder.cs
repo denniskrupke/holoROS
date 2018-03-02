@@ -8,7 +8,7 @@ namespace RosInt64Coder
 {
     public static class RosInt64Coder_
     {
-        public static RosMessages.Int64 deserializeSingleInt64(JsonObject jint64)
+        public static RosMessages.Int64 deserializeSimple(JsonObject jint64)
         {
 			//evtl ändern in String -> long, da floatingpointfehler
             double doublelong = jint64["data"].GetNumber();
@@ -20,7 +20,7 @@ namespace RosInt64Coder
             return int64Object;
         }
 
-        public static string serializeSingleInt64(RosMessages.Int64 integer64)
+        public static string serializeSimple(RosMessages.Int64 integer64)
         {
             return "{\"int64\": {\"data\": " + integer64.data + "}";
         } 

@@ -4,6 +4,7 @@ using RosMessages;
 using RosArrayService;
 using RosHeaderCoder;
 using RosJointTrajectoryPointCoder;
+using System.Threading.Tasks;
 using System;
 
 namespace RosJointTrajectoryCoder
@@ -11,24 +12,24 @@ namespace RosJointTrajectoryCoder
 
     class RosJointTrajectoryCoder_ : rosComplexCoder
     {
-        private JointTrajectory latestJointTrajectory;
+     //   private JointTrajectoryPoint[] result;
 
         public RosJointTrajectoryCoder_()
         {
-            latestJointTrajectory = new JointTrajectory();
         }
 
-        // hier wird einfach hart-gecoded eine JointState-Nachricht deserialisiert
+        // Start der Deserialisierung, Schnittstelle
         public RosPublish startDeserializing(JsonObject jsonObject)
         {
             return deserializeJointTrajectory(jsonObject);
         }
 
-        // die andere Richtung wäre auch schön, damit man auch Nachrichten an ROS senden kann
+        // Start der Serialisierung, Schnittstelle
         public string startSerializing(RosMessage message)
         {
-            //todo
             JointTrajectory jt = new JointTrajectory();
+
+            string topic = message.topic;
 
             RosPublish publishMessage = (RosPublish)message;
 
@@ -38,56 +39,58 @@ namespace RosJointTrajectoryCoder
                 jt = (JointTrajectory)msg;
             }
 
-            return serializeJointTrajectory(jt);
-
-        }
-
-        public JointTrajectory getJointTrajectory()
-        {
-            return latestJointTrajectory;
-        }
-
-        private bool isJointTrajectory(string message)
-        {
-            return message.Equals("/joint_trajectories");
+            return serializeJointTrajectory(jt, topic);
         }
 
         private RosPublish deserializeJointTrajectory(JsonObject jsonObject)
         {
+            JointTrajectory messageData = new JointTrajectory();
+            RosJointTrajectoryPointCoder_ pointCoder = new RosJointTrajectoryPointCoder_();
 
+            // Nutze den ArrayService, um die JSONArrays in "normale" Arrays umzuwandeln
             JsonArray jjoint_names = jsonObject["msg"].GetObject()["joint_names"].GetArray();
-
 
             // baue den Header
             Header header = RosHeaderCoder_.deserializeSingleHeader((JsonValue)jsonObject["msg"].GetObject()["header"]);
 
-            // Lasse die JointTrajectoryPoints vom jeweiligen Coder deserialisieren
-
             JsonArray jjointtrajectorypoints = jsonObject["msg"].GetObject()["points"].GetArray();
+            int jtpCount = jjointtrajectorypoints.Count;
 
-            //TODO JointTrajectoryPoints deserialisieren
-            JointTrajectoryPoint[] pts = new JointTrajectoryPoint[jjointtrajectorypoints.Count];
-            for (int i = 0; i < jjointtrajectorypoints.Count; i++)
+            // Lasse die JointTrajectoryPoints vom jeweiligen Coder deserialisieren
+            /* Multithreading
+        * result = new JointTrajectoryPoint[jtpCount];
+       Task[] tasks = new Task[1]
+       {
+            Task.Factory.StartNew(() => baueJointTrajectoryPointArray(jjointtrajectorypoints, jtpCount, pointCoder))
+       };
+       */
+            JointTrajectoryPoint[] pts = new JointTrajectoryPoint[jtpCount];
+            Parallel.For(0, jtpCount, i =>
             {
-                pts[i] = RosJointTrajectoryPointCoder_.deserializeSingleJointTrajectoryPoint((JsonValue)jjointtrajectorypoints[i]);
-            }
+                pts[i] = pointCoder.deserializeSimple((JsonValue)jjointtrajectorypoints[i]);
+            });
+            // tasks[0].Wait();
 
-
-            JointTrajectory messageData = new JointTrajectory();
+            messageData.joint_names = RosArrayService_.stringArrayAusJsonArray(jjoint_names);
             messageData.header = header;
-            // Nutze den ArrayService, um die JSONArrays in "normale" Arrays umzuwandeln
-            messageData.joint_names = RosArrayService_.stringArrayAusJSonArray(jjoint_names);
             messageData.points = pts;
 
-
             return new RosPublish("\"/preview_trajectory\"", messageData);
-
+        }
+        // Threading
+        private void baueJointTrajectoryPointArray(JsonArray array, int count, RosJointTrajectoryPointCoder_ coder)
+        {
+            Parallel.For(0, count, i =>
+            {
+ //               result[i] = coder.deserializeSimple((JsonValue)array[i]);
+            });
         }
 
-        private string serializeJointTrajectory(JointTrajectory jt)
+        private string serializeJointTrajectory(JointTrajectory jt, string topic)
         {
             //serialisiere Topic
-            string topic = "\"topic\": \"/preview_trajectory\", "; // platzhalter, topic vom RosMessage- objekt später holen
+            //string topic = "\"topic\": \"/preview_trajectory\", "; // platzhalter, topic vom RosMessage- objekt später holen : DONE
+            string ausgabeTopic = "\"topic\": " + topic + ", ";
 
             // serialisiere header
             Header jtheader = jt.header;
@@ -102,14 +105,14 @@ namespace RosJointTrajectoryCoder
             string points_string = "";
             for(int i = 0; i<jtps.Length-2; ++i)
             {
-                points_string = points_string + RosJointTrajectoryPointCoder_.serializeSingleJointTrajectoryPoint(jtps[i]) + ", ";
+                points_string = points_string + RosJointTrajectoryPointCoder_.serializeSimple(jtps[i]) + ", ";
             }
-            points_string = points_string + RosJointTrajectoryPointCoder_.serializeSingleJointTrajectoryPoint(jtps[jtps.Length-1]);
+            points_string = points_string + RosJointTrajectoryPointCoder_.serializeSimple(jtps[jtps.Length-1]);
             points_string = "\"points: \"[" + points_string + "]";
 
 
             // Einzelteile zusammenkleben und formatiert zurückgeben
-            return "\"{" + topic + "\"msg\": {" + headerString + joint_names_string + points_string + "}, \"op\": \"publish\"}\"";
+            return "\"{" + ausgabeTopic + "\"msg\": {" + headerString + joint_names_string + points_string + "}, \"op\": \"publish\"}\"";
         }
     }
 }

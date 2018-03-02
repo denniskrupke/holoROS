@@ -8,7 +8,7 @@ namespace RosMultiArrayDimensionCoder
 {
     public static class RosMultiArrayDimensionCoder_
     {
-        public static MultiArrayDimension deserializeSingleMultiArrayDimension(JsonObject jmultiArrayDimension)
+        public static MultiArrayDimension deserializeSimple(JsonObject jmultiArrayDimension)
         {
             string multiArrayDimensionLabel = jmultiArrayDimension["label"].GetString();
             double multiArrayDimensionSize = jmultiArrayDimension["size"].GetNumber();
@@ -23,7 +23,7 @@ namespace RosMultiArrayDimensionCoder
             return mad;
         }
 
-        public static string serializeSingleMultiArrayDimension(MultiArrayDimension mad)
+        public static string serializeSimple(MultiArrayDimension mad)
         {
             return "{\"multiarraydimension\": {\"label\": " + mad.label + ", \"size\": " + mad.size + ", \"stride\": " + mad.stride + "}";
         } 
