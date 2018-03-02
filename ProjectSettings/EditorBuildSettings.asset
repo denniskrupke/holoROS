@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: Assets/Scenes/Vuforia-0-Splash.unity
+    guid: c821e2eca6ff325469f8a758a0d7e93e
+  - enabled: 0
+    path: Assets/Scenes/Vuforia-1-Loading.unity
+    guid: 03078236e6712c24a9dd679dfe864861
+  - enabled: 0
+    path: Assets/Scenes/Vuforia-2-Hololens.unity
+    guid: c8dc8c5a8e70670459383013e6fc2864
+  - enabled: 0
+    path: Assets/Scenes/tamsUR5.unity
+    guid: f449141bb79668647900d28e01ca1792
+  - enabled: 0
+    path: Assets/Scenes/hri18-experiment.unity
+    guid: 22ce1e0393f173f41bdf39c5f031e3d7
+  - enabled: 0
+    path: Assets/Scenes/iros18-accuracy-registration.unity
+    guid: 8b05ecb7b0731da4bad4864c65dd7735
+  - enabled: 0
+    path: Assets/Scenes/iros18-accuracy-registration-mod.unity
+    guid: 374a103f0270e1645a6d04045c6661d0
+  - enabled: 1
+    path: Assets/Scenes/iros18-pick-and-place.unity
+    guid: 10aded48124cf8743ac7cf63a7c18d18
+  - enabled: 0
+    path: Assets/Scenes/iros18-accuracy-registration-final.unity
+    guid: 1d7fd9ef968461d4e850a2e62e681e38
