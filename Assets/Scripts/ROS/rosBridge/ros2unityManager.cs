@@ -95,8 +95,18 @@ public class ros2unityManager : MonoBehaviour {
 	 * Here commands to the robot-side can be send
 	 */
 	void Update () {
+#if WINDOWS_UWP
+        if (robotControl != null && rosBridge.GetLatestJoinState() != null && rosBridge.GetLatestJoinState().name != null)
+        {
+            //debugHUD.text = "\n Try to update robot control values." + debugHUD.text;
+            robotControl.Names = rosBridge.GetLatestJoinState().name;
+            robotControl.Angles = rosBridge.GetLatestJoinState().position;
+            // gripperControl.Names = rosBridge.GetLatestJoinState().name;
+            // gripperControl.Angles = rosBridge.GetLatestJoinState().position;
+        }
+#endif
         //this.debugHUD.text = "messageCount";// + rosBridge.messageCount;
-        
+
         /*		
 		if (Input.GetKeyDown (KeyCode.C)) {
 			rosBridge.EnqueRosCommand (new RosPublish ("/SModelRobotOutput", HandControlMessageGenerator.closeHand (1.0f)));
@@ -123,19 +133,10 @@ public class ros2unityManager : MonoBehaviour {
     }
 
 
-	// for efficiency reasons, motion of the robot joints and updates of the streamed video are done with 30 FPS
-	void FixedUpdate(){
+    // for efficiency reasons, motion of the robot joints and updates of the streamed video are done with 30 FPS
+    void FixedUpdate(){
         this.statusHUD.text = ""+rosBridge.messageCount;
-#if WINDOWS_UWP
-        if (robotControl != null && rosBridge.GetLatestJoinState() != null && rosBridge.GetLatestJoinState().name != null)
-        {
-            //debugHUD.text = "\n Try to update robot control values." + debugHUD.text;
-            robotControl.Names = rosBridge.GetLatestJoinState().name;
-            robotControl.Angles = rosBridge.GetLatestJoinState().position;
-            // gripperControl.Names = rosBridge.GetLatestJoinState().name;
-            // gripperControl.Angles = rosBridge.GetLatestJoinState().position;
-        }
-#endif
+
         // if (count == 0) debugHUD.text = "";
         /* if (robotControl != null && rosBridge.GetLatestJoinState() != null && rosBridge.GetLatestJoinState().name != null)
          {

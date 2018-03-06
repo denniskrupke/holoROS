@@ -8,7 +8,7 @@ namespace Config
 */
 class parserConfig
 {
-    private static List<string> _jointStateTopics = new List<string>{ "/joint_states", "\"/joint_states\"" };
+    private static List<string> _jointStateTopics = new List<string>{ "/ur5_joint_states", "\"/ur5_joint_states\"" };
 
     private static List<string> _jointTrajectoryTopics = new List<string>{ "/preview_trajectory", "\"/preview_trajectory\"" };
 

@@ -280,7 +280,8 @@ namespace RosBridge_old
 
         //The MessageReceived event handler. DON'T ACCESS CANVAS!!!!
         private void WebSock_MessageReceived(MessageWebSocket sender, MessageWebSocketMessageReceivedEventArgs args)
-        {           
+        {
+           //this.messageCount++;
            DataReader messageReader = args.GetDataReader();
            messageReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
            messageReader.ByteOrder = ByteOrder.LittleEndian;
@@ -396,6 +397,7 @@ namespace RosBridge_old
                     //this.statusHUDText.text = "A:";
                     //messageCount++;
                     this.rosMessageStrings.Enqueue(message);
+                    //this.messageCount++;
                     //this.debugHUDText.text = "\n" + message + this.debugHUDText.text;
                     //MaybeLog("numberOfMessagesInQueue: " + rosMessageStrings.Count());
                 }
@@ -491,7 +493,8 @@ namespace RosBridge_old
             //Send(new RosSubscribe("/joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
             //Send(new RosSubscribe_old("/preview_publisher", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
             // Send(new RosSubscribe_old("/robot/joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
-            Send(new RosSubscribe_old("/planned_joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
+            //Send(new RosSubscribe_old("/planned_joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
+            Send(new RosSubscribe_old("/ur5_joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
             // if (verbose) this.debugHUDText.text = "\n Send subscribe message" + this.debugHUDText.text;
             //this.debugHUDText.text = "\n Enqueued subscribe message" + this.debugHUDText.text;                
         //}
@@ -501,7 +504,7 @@ namespace RosBridge_old
             // Send(new RosSubscribe_old("/handDirectionPointer", "std_msgs/Float32MultiArray"));
             // if (verbose) this.debugHUDText.text = "\n Send subscribe message" + this.debugHUDText.text;
         // }
-            Send(new RosSubscribe_old("/planned_successful", "std_msgs/Bool", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0        
+           // Send(new RosSubscribe_old("/planned_successful", "std_msgs/Bool", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0        
 
 #endif
         }
@@ -594,11 +597,14 @@ namespace RosBridge_old
                         //this.messageCount += 1;
 #if WINDOWS_UWP
                         //                        TODO: mertke
+                        
                         RosMessage msg = DeserializeJSONstring(rosMessageStrings.Dequeue());
-                        if(msg != null){
-                          //this.latestJointState
-                        var message = msg as RosPublish;
-                        this.latestJointState = (JointState)message.msg;
+                        
+                        if (msg != null){
+                            this.messageCount++;
+                            //this.latestJointState
+                            var message = msg as RosPublish;
+                            this.latestJointState = (JointState)message.msg;                        
                         }
 
 #endif
