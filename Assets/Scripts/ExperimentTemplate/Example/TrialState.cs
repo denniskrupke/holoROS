@@ -25,7 +25,7 @@ public class TrialState : ExperimentState {
         }
         if(ec.CurrentTrialIndex>= ec.CurrentTrials.Count)
         {
-            return nextState;
+            return nextStates[0];
         }
         else
         {

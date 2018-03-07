@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 
-public class Idle_State : ExperimentState
+public class Picked_State : ExperimentState
 {    
     [SerializeField]
     Text text;
@@ -29,7 +29,7 @@ public class Idle_State : ExperimentState
     public override ExperimentState HandleInput(ExperimentController ec)
     {
         nextStateIndex = 0;//picked
-        if(rosbridgeClient.latestPlanningStatus == std_msgs.Int32_old.HOLD_OBJECT) next = true;
+        if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT) next = true;
 
         if(Next)
         {
@@ -44,5 +44,10 @@ public class Idle_State : ExperimentState
     public override void UpdateState(ExperimentController ec)
     {        
         text.text = "";
+        if (triggerNextState)
+        {
+            next = true;
+            triggerNextState = false;
+        }
     }
 }

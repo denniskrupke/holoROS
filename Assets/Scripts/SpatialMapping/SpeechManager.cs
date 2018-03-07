@@ -40,7 +40,7 @@ public class SpeechManager : MonoBehaviour
             //this.BroadcastMessage("OnPickUp()");
             this.setTransform.OnPickUp();
             lastCommand = "Pick";
-            sc.currentState.Next = true;
+            sc.CurrentState.triggerNextState = true;
         });
 
         keywords.Add("Execute", () =>
@@ -51,7 +51,7 @@ public class SpeechManager : MonoBehaviour
             if(lastCommand == "Pick") this.setTransform.OnConfirmPick();
             else if(lastCommand == "Place") this.setTransform.OnConfirmPlace();
             lastCommand = "Execute";
-            sc.currentState.Next = true;
+            sc.CurrentState.triggerNextState = true;
         });
        
 
@@ -61,7 +61,7 @@ public class SpeechManager : MonoBehaviour
             //this.BroadcastMessage("OnPlace()");
             this.setTransform.OnPlace();
             lastCommand = "Place";
-            sc.currentState.Next = true;
+            sc.CurrentState.triggerNextState = true;
         });
 
 

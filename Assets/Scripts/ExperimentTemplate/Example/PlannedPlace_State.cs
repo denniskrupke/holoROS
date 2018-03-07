@@ -3,13 +3,16 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 
-public class Idle_State : ExperimentState
+public class PlannedPlace_State : ExperimentState
 {    
     [SerializeField]
     Text text;
 
     [SerializeField]
     RosBridge_old.RosBridgeClient_old rosbridgeClient;
+
+    [SerializeField]
+    SpeechManager sm;
 
     bool next = false;
 
@@ -49,5 +52,10 @@ public class Idle_State : ExperimentState
     public override void UpdateState(ExperimentController ec)
     {        
         text.text = "";
+        if (triggerNextState)
+        {
+            next = true;
+            triggerNextState = false;
+        }
     }
 }

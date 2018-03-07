@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 
-public class Idle_State : ExperimentState
+public class PlannedPick_State : ExperimentState
 {    
     [SerializeField]
     Text text;
@@ -53,5 +53,10 @@ public class Idle_State : ExperimentState
     public override void UpdateState(ExperimentController ec)
     {        
         text.text = "";
+        if (triggerNextState)
+        {
+            next = true;
+            triggerNextState = false;
+        }
     }
 }

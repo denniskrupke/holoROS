@@ -30,7 +30,7 @@ public class IntroductionState : ExperimentState
         if(Next)
         {
             c.gameObject.SetActive(false);
-            return nextState;
+            return nextStates[0];
         }
         else
         {

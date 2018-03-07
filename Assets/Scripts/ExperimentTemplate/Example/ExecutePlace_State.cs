@@ -3,13 +3,10 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 
-public class Idle_State : ExperimentState
+public class ExecutePlace_State : ExperimentState
 {    
     [SerializeField]
-    Text text;
-
-    [SerializeField]
-    Collider c; // Put the collider of the table here
+    Text text;   
 
     [SerializeField]
     RosBridge_old.RosBridgeClient_old rosbridgeClient;
@@ -45,6 +42,11 @@ public class Idle_State : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {     
-        text.text = "executing";        
+        text.text = "executing";
+        if (triggerNextState)
+        {
+            next = true;
+            triggerNextState = false;
+        }
     }
 }

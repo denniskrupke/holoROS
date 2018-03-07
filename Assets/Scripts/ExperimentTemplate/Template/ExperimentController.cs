@@ -19,6 +19,22 @@ public abstract class ExperimentController
 
     protected List<ExperimentTrial> currentTrials;
 
+    public ExperimentState CurrentState
+    {
+        get
+        {
+            return currentState;
+        }
+    }
+
+    public ExperimentState PreviousState
+    {
+        get
+        {
+            return previousState;
+        }
+    }
+
     public List<ExperimentTrial> CurrentTrials
     {
         get
@@ -85,7 +101,7 @@ public abstract class ExperimentController
 
         if (!File.Exists(path))
         {
-            outputStream = new StreamWriter(path, true);
+            //outputStream = new StreamWriter(path, true);
         }
         else
         {
@@ -109,7 +125,7 @@ public abstract class ExperimentController
     void OnDestroy()
     {
         outputStream.Flush();
-        outputStream.Close();
+        //outputStream.Close();
     }
 
 }

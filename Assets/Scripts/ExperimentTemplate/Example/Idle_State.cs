@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 
+
 public class Idle_State : ExperimentState
 {    
     [SerializeField]
@@ -11,9 +12,7 @@ public class Idle_State : ExperimentState
     [SerializeField]
     RosBridge_old.RosBridgeClient_old rosbridgeClient;
 
-    [SerializeField]
-    SpeechManager sm;
-
+   
     bool next = false;    
 
     public bool Next
@@ -45,6 +44,11 @@ public class Idle_State : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {
-        text.text = "";        
+        text.text = "idle";
+        if (triggerNextState)
+        {
+            next = true;
+            triggerNextState = false;
+        }
     }
 }

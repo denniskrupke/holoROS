@@ -39,7 +39,7 @@ namespace RosBridge_old
 	*/
     class RosBridgeClient_old {
         //public static readonly string ROSBRIDGE_IP = "134.100.13.189";//"134.100.13.202";//203";
-        public static readonly string ROSBRIDGE_IP = "134.100.13.223";//"134.100.13.158";//"134.100.13.223";//"134.100.13.202"; //Real UR-5
+        public static readonly string ROSBRIDGE_IP = "134.100.13.158";//"134.100.13.223";//"134.100.13.202"; //Real UR-5
         //public static readonly string ROSBRIDGE_IP = "134.100.13.121";//"134.100.13.202";// Virtual Robot Model
         //public static readonly string ROSBRIDGE_PORT = "8080";
         public static readonly string ROSBRIDGE_PORT = "9090";
@@ -58,7 +58,7 @@ namespace RosBridge_old
 
         private CompressedImage_old latestImage;
         private JointState_old latestJointState;
-        private PlanningStatus_old latestPlanningStatus;
+        //private PlanningStatus_old latestPlanningStatus;
 
         private Vector3 latestHandPosition = new Vector3(0.0f,0.0f,0.0f);
         private Vector3 latestHandPointingDirection = new Vector3(0.0f, 1.0f, 0.0f);
@@ -119,7 +119,7 @@ namespace RosBridge_old
         private int previousPlanningStatus;
 
 
-        public int LatestPlanningStatus = 0;
+        public int LatestPlanningStatus
         {
             get 
             {
@@ -132,7 +132,7 @@ namespace RosBridge_old
             }
         }
 
-        public int PreviousPlanningStatus = 0;
+        public int PreviousPlanningStatus
         {
             get 
             {
@@ -639,7 +639,7 @@ namespace RosBridge_old
                 messageString += "}";
             }
             else if (msg.op == "publish") {
-                if(msg.topic == "/hololens_plan_pick"){
+                if(msg.topic == "/hololens/plan_pick"){
                     //TODO
                     messageString = "{ \"op\": \"";
                         messageString += msg.op;
@@ -684,7 +684,7 @@ namespace RosBridge_old
                         messageString += "}";                                                                                     
                     messageString += "}";
                 }
-                else if (msg.topic == "/hololens_plan_place")
+                else if (msg.topic == "/hololens/plan_place")
                 {
                     //TODO
                     messageString = "{ \"op\": \"";
@@ -727,7 +727,7 @@ namespace RosBridge_old
                     messageString += "}";
                     messageString += "}";
                 }
-                else if(msg.topic == "/hololens_execute_pick"){
+                else if(msg.topic == "/hololens/execute_pick"){
                     //TODO
                     messageString = "{ \"op\": \"";
                         messageString += msg.op;
@@ -740,7 +740,7 @@ namespace RosBridge_old
                         messageString += "}";
                     messageString += "}";
                 }
-                else if (msg.topic == "/hololens_execute_place")
+                else if (msg.topic == "/hololens/execute_place")
                 {
                     //TODO
                     messageString = "{ \"op\": \"";
@@ -834,7 +834,7 @@ namespace RosBridge_old
                 jsonObject = JsonObject.Parse(message);
 
                 previousPlanningStatus = latestPlanningStatus;
-                latestPlanningStatus = (int) jsonObject["msg"].GetObject()["data"].GetNumber;
+                latestPlanningStatus = (int) jsonObject["msg"].GetObject()["data"].GetNumber();
 
                 //TODO show planning results in a temporary message
             }

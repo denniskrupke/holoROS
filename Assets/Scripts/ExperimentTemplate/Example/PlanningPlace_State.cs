@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 
-public class Idle_State : ExperimentState
+public class PlanningPlace_State : ExperimentState
 {    
     [SerializeField]
     Text text;
@@ -31,13 +31,13 @@ public class Idle_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {
-        if(rosbridgeClient.latestPlanningStatus == std_msgs.Int32_old.PLANNING_FAILED){
-            if(typeof(this.previousState) == typeof(PlannedPlace_State)){
+        if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){
+            if(ec.PreviousState.GetType() == typeof(PlannedPlace_State)){
                 nextStateIndex = 1; //PlannedPlace
             }
             else nextStateIndex = 0; //Picked
         }
-        else if(rosbridgeClient.latestPlanningStatus == std_msgs.Int32_old.SUCCESS){
+        else if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.SUCCESS){
             nextStateIndex = 1; //PlannedPlace
         }
         next = true;
@@ -55,6 +55,11 @@ public class Idle_State : ExperimentState
     public override void UpdateState(ExperimentController ec)
     {       
         text.text = "planning place";
-        tableTopCollider.SetActive(true);
+        tableTopCollider.enabled = true;
+        if (triggerNextState)
+        {
+            next = true;
+            triggerNextState = false;
+        }
     }
 }

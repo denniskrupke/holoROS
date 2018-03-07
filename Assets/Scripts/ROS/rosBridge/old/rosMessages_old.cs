@@ -120,14 +120,14 @@ namespace RosMessages_old{
 
         public class Int32_old : MessageData_old
         {
-            public static const int SUCCESS = 1;
-            public static const int PLANNING_FAILED = -1;
-            public static const int EXECUTING = 2;
-            public static const int IDLE = 3;
-            public static const int PLANNED_PICK = 4;
-            public static const int HOLD_OBJECT = 5;
-            public static const int PLANNED_PLACE = 6;
-            public static const int ERROR = -99;
+            public const int SUCCESS = 1;
+            public const int PLANNING_FAILED = -1;
+            public const int EXECUTING = 2;
+            public const int IDLE = 3;
+            public const int PLANNED_PICK = 4;
+            public const int HOLD_OBJECT = 5;
+            public const int PLANNED_PLACE = 6;
+            public const int ERROR = -99;
 
             public int data;
         }

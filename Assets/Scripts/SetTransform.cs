@@ -58,7 +58,7 @@ public class SetTransform : MonoBehaviour {
         Header_old h = new Header_old();        
         ps.header = h;        
         ps.header.frame_id = objectSelectionManager.CurrentSelectedObject.name;        
-        rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens_plan_pick", ps));        
+        rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens/plan_pick", ps));        
     }
 
     public void OnPlace()
@@ -78,18 +78,18 @@ public class SetTransform : MonoBehaviour {
         ps.point.z = invPos.y;
         Header_old h = new Header_old();
         ps.header = h;        
-        rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens_plan_place", ps));
+        rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens/plan_place", ps));
     }
 
     public void OnConfirmPick(){
         RosMessages_old.std_msgs.Empty_old confirm = new RosMessages_old.std_msgs.Empty_old();        
-        rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens_execute_pick", confirm));
+        rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens/execute_pick", confirm));
     }
 
     public void OnConfirmPlace()
     {
         RosMessages_old.std_msgs.Empty_old confirm = new RosMessages_old.std_msgs.Empty_old();
-        rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens_execute_place", confirm));
+        rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens/execute_place", confirm));
     }
 
     public void OnOpenGripper(){
