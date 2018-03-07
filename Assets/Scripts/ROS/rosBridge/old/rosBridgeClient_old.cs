@@ -881,8 +881,9 @@ namespace RosBridge_old
         rosComplexCoder coder = null;
         if (parserConfig.getJointStateTopics().Contains(jtopic))
         {
-            coder = new RosJointStateCoderParallel();
-            return coder.startDeserializing(jsonObject);
+            //coder = new RosJointStateCoderParallel();
+                coder = new RosJointStateCoderSeriell();
+                return coder.startDeserializing(jsonObject);
         }
         else if (parserConfig.getJointTrajectoryTopics().Contains(jtopic))
         {
