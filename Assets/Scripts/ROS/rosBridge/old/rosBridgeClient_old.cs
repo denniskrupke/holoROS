@@ -58,6 +58,8 @@ namespace RosBridge_old
 
         private CompressedImage_old latestImage;
         private JointState_old latestJointState;
+        private PlanningStatus_old latestPlanningStatus;
+
         private Vector3 latestHandPosition = new Vector3(0.0f,0.0f,0.0f);
         private Vector3 latestHandPointingDirection = new Vector3(0.0f, 1.0f, 0.0f);
         private Quaternion latestHandRotation = new Quaternion();
@@ -113,6 +115,36 @@ namespace RosBridge_old
 
         private string incomingMessageString = "";
 
+        private int latestPlanningStatus;
+        private int previousPlanningStatus;
+
+
+        public int LatestPlanningStatus = 0;
+        {
+            get 
+            {
+                return latestPlanningStatus;
+            }
+
+            set
+            {
+                latestPlanningStatus = value;
+            }
+        }
+
+        public int PreviousPlanningStatus = 0;
+        {
+            get 
+            {
+                return previousPlanningStatus;
+            }
+
+            set
+            {
+                previousPlanningStatus = value;
+            }
+        }
+
         public string IncomingMessageString
         {
             get
@@ -138,6 +170,7 @@ namespace RosBridge_old
 
             latestImage = new CompressedImage_old();                // Storage for latest incoming image message
             latestJointState = new JointState_old();               // Storage for latest incoming jointState	
+
             rosMessageStrings = new Queue<string>();			// Incoming message queue
             rosCommandQueue = new Queue<RosMessage_old>();          // Outgoing message queue
 
@@ -476,27 +509,17 @@ namespace RosBridge_old
             if (verbose) this.debugHUDText.text = "\n Subscribing to /camera/rgb/image_rect_color/compressed" + this.debugHUDText.text;            
             //Send(new RosSubscribe("/camera/rgb/image_rect_color/compressed", "sensor_msgs/CompressedImage"));
         }
-        //if (RosBridgeClient_old.jointStates) {
-            // MaybeLog ("Subscribing to /joint_states");
-            // if (verbose) this.debugHUDText.text = "\n Subscribing to /joint_states" + this.debugHUDText.text;
-            //RosSubscribe rosSub = new RosSubscribe ("/joint_states", "sensor_msgs/JointState");
-            //if (verbose) this.debugHUDText.text = "\n Created subscribe message" + this.debugHUDText.text;
-            //this.EnqueRosCommand(rosSub);
-            //Send(new RosSubscribe("/joint_states", "sensor_msgs/JointState", 200));
-            //Send(new RosSubscribe("/joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
+        if (RosBridgeClient_old.jointStates) {
             //Send(new RosSubscribe_old("/preview_publisher", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
             // Send(new RosSubscribe_old("/robot/joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
-            Send(new RosSubscribe_old("/planned_joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
+            Send(new RosSubscribe_old("/hololens/planned_joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
             // if (verbose) this.debugHUDText.text = "\n Send subscribe message" + this.debugHUDText.text;
             //this.debugHUDText.text = "\n Enqueued subscribe message" + this.debugHUDText.text;                
-        //}
-        // if (RosBridgeClient_old.handTrackingAprilTags) {
-            // MaybeLog("Subscribing to /handDirectionPointer");
-            // if (verbose) this.debugHUDText.text = "\n Subscribing to /handDirectionPointer" + this.debugHUDText.text;
-            // Send(new RosSubscribe_old("/handDirectionPointer", "std_msgs/Float32MultiArray"));
-            // if (verbose) this.debugHUDText.text = "\n Send subscribe message" + this.debugHUDText.text;
-        // }
-            Send(new RosSubscribe_old("/planned_successful", "std_msgs/Bool", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0        
+        }
+        // if (RosBridgeClient_old.handTrackingAprilTags) {        
+            // Send(new RosSubscribe_old("/handDirectionPointer", "std_msgs/Float32MultiArray"));            
+        // }            
+            Send(new RosSubscribe_old("/hololens/state", "std_msgs/Int32", 1)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0        
 
 #endif
         }
@@ -572,28 +595,22 @@ namespace RosBridge_old
 // #else
         private void ProcessRosMessageQueue()
         {
-
-
            while (processMessageQueue)                
-            {
-                //this.messageCount++;
+            {         
                 //MaybeLog ("ProcessRosMessageQueue...");                
                 if (this.rosMessageStrings.Count() > 0)
                  {                    
                     //MaybeLog ("Try to dequeue...");
-                    //lock (syncObjMessageQueue)
-                    {
-                        //MaybeLog ("Dequeue...");                    
-                       
-                    this.DeserializeJSONstringHard(rosMessageStrings.Dequeue());
-                    //this.messageCount += 1;
+                    //lock (syncObjMessageQueue) // TODO check if the lock is needed
+                    //{
+                        //MaybeLog ("Dequeue...");                                      
+                    this.DeserializeJSONstringHard(rosMessageStrings.Dequeue());                    
 #if WINDOWS_UWP
                         //                        TODO: mertke
                         //this.latestJointState = (JointState_old)this.DeserializeJSONstring(rosMessageStrings.Dequeue());
 #endif
-                    }
+                    //}
                 }
-
 
 #if WINDOWS_UWP
                     //System.Threading.Tasks.Task.Delay(2).Wait();
@@ -792,23 +809,15 @@ namespace RosBridge_old
 #if WINDOWS_UWP
 
             // if (message.Contains("joint_states") || message.Contains("preview_publisher")) {
-            if (message.Contains("planned_joint_states")) {
-                
+            if (message.Contains("hololens/planned_joint_states")) {                
                 jsonObject = JsonObject.Parse(message);
-
-               
-
-                //this.messageCount = (int)jsonObject["msg"].GetObject()["header"].GetObject()["seq"].GetNumber();
+            
                 JsonArray jnarray = jsonObject["msg"].GetObject()["name"].GetArray();                
                 JsonArray jparray = jsonObject["msg"].GetObject()["position"].GetArray();
 
-                
-
-                string[] names = new string[jnarray.Count];
-
-                
-
+                string[] names = new string[jnarray.Count];                
                 double[] positions = new double[jparray.Count];
+
                 for (int i = 0; i < jnarray.Count; i++)
                 {
                     names[i] = jnarray[i].GetString();
@@ -816,13 +825,18 @@ namespace RosBridge_old
                 for (int i = 0; i < jparray.Count; i++)
                 {
                     positions[i] = jparray[i].GetNumber();
-                }
-
-                //if (!names.Contains("s_model_palm_finger_1_joint")) return;
-                //else this.messageCount++;
+                }                
 
                 latestJointState.name = names;
                 latestJointState.position = positions;
+            }
+            else if (message.Contains("hololens/state")){
+                jsonObject = JsonObject.Parse(message);
+
+                previousPlanningStatus = latestPlanningStatus;
+                latestPlanningStatus = (int) jsonObject["msg"].GetObject()["data"].GetNumber;
+
+                //TODO show planning results in a temporary message
             }
             /* TODO
             else if (message.Contains("planned_successful")) {
