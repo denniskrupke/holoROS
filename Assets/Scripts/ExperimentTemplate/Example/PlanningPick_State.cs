@@ -28,25 +28,15 @@ public class PlanningPick_State : ExperimentState
     public override ExperimentState HandleInput(ExperimentController ec)
     {
         if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){            
-            if (ec.PreviousState.GetType() == typeof(PlannedPick_State)){
-                nextStateIndex = 1; //PlannedPick
+            if (ec.PreviousState.GetType() == typeof(PlannedPick_State)){                
+                return nextStates[1]; //PlannedPick
             }
-            else nextStateIndex = 0; //Idle
+            else return nextStates[0]; //Idle
         }
         else if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.SUCCESS){
-            nextStateIndex = 1; //PlannedPick
+            return nextStates[1]; //PlannedPick
         }
-        next = true;
-
-        if(next)
-        {
-            next = false;
-            return nextStates[nextStateIndex];
-        }
-        else
-        {
-            return this;
-        }        
+        else return this;        
     }
 
     public override void UpdateState(ExperimentController ec)

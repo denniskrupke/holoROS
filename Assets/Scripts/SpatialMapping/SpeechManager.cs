@@ -37,7 +37,7 @@ public class SpeechManager : MonoBehaviour
             // Triggers pick-point extraction, message creation and enqueueing            
             this.setTransform.OnPickUp();
             lastCommand = "Pick";
-            sc.CurrentState.Next = true;
+            if((sc.CurrentState.GetType() == typeof(PlannedPick_State)) || (sc.CurrentState.GetType() == typeof(Idle_State))) sc.CurrentState.SetNext(true);
         });
 
         keywords.Add("Execute", () =>
@@ -46,7 +46,7 @@ public class SpeechManager : MonoBehaviour
             if(lastCommand == "Pick") this.setTransform.OnConfirmPick();
             else if(lastCommand == "Place") this.setTransform.OnConfirmPlace();
             lastCommand = "Execute";
-            sc.CurrentState.Next = true;
+            sc.CurrentState.SetNext(true);
         });
        
 
@@ -55,7 +55,7 @@ public class SpeechManager : MonoBehaviour
             // Triggers place-point extraction, message creation and enqueueing            
             this.setTransform.OnPlace();
             lastCommand = "Place";
-            sc.CurrentState.Next = true;
+            sc.CurrentState.SetNext(true);
         });
 
 

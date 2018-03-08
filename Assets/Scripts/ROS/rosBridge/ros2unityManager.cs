@@ -95,7 +95,7 @@ public class ros2unityManager : MonoBehaviour {
 	 * Here commands to the robot-side can be send
 	 */
 	void Update () {
-        //this.debugHUD.text = "messageCount";// + rosBridge.messageCount;
+        //this.statusHUD.text = ""+rosBridge.messageCount;
         
         /*		
 		if (Input.GetKeyDown (KeyCode.C)) {

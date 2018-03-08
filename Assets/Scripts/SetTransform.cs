@@ -58,7 +58,7 @@ public class SetTransform : MonoBehaviour {
         Header_old h = new Header_old();        
         ps.header = h;        
         ps.header.frame_id = objectSelectionManager.CurrentSelectedObject.name;  
-        objectWithTargetMarker = selectionManager.CurrentSelectedObject;      
+        objectWithTargetMarker = objectSelectionManager.CurrentSelectedObject;      
         rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens/plan_pick", ps));        
     }
 

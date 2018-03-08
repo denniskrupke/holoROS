@@ -167,7 +167,7 @@ public class ParticipantTargetPositioner : MonoBehaviour {
         }
         else {
             text.text = "\n " + "randomizer is done" + text.text;
-            this.armControl.ResetArm();
+            //this.armControl.ResetArm();
             this.text.text = "FINISHED";
             this.debugHUD.SetActive(true);
             

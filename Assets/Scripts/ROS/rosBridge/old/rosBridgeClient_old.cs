@@ -386,7 +386,8 @@ namespace RosBridge_old
 
         private void ReceiveAndEnqueue(string message) {            
             MaybeLog("Receive...");
-            if (!string.IsNullOrEmpty(message)) {          
+            
+            if (!string.IsNullOrEmpty(message)) {                
                 lock (syncObjMessageQueue) {                                        
                     this.rosMessageStrings.Enqueue(message);                    
                     MaybeLog("numberOfMessagesInQueue: " + rosMessageStrings.Count());
@@ -461,15 +462,15 @@ namespace RosBridge_old
 #if WINDOWS_UWP        
         if(RosBridgeClient_old.imageStreaming) {
             MaybeLog ("Subscribing to /camera/rgb/image_rect_color/compressed");            
-            Send(new RosSubscribe("/camera/rgb/image_rect_color/compressed", "sensor_msgs/CompressedImage"));
+            Send(new RosSubscribe_old("/camera/rgb/image_rect_color/compressed", "sensor_msgs/CompressedImage"));
         }
         if (RosBridgeClient_old.jointStates) {
             // Send(new RosSubscribe_old("/preview_publisher", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
             // Send(new RosSubscribe_old("/robot/joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
             Send(new RosSubscribe_old("/hololens/planned_joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0                        
-        }
+        }            
         // if (RosBridgeClient_old.handTrackingAprilTags) {        
-            // Send(new RosSubscribe_old("/handDirectionPointer", "std_msgs/Float32MultiArray"));            
+        // Send(new RosSubscribe_old("/handDirectionPointer", "std_msgs/Float32MultiArray"));            
         // }            
             Send(new RosSubscribe_old("/hololens/state", "std_msgs/Int32", 1)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0        
 #endif
@@ -552,6 +553,7 @@ namespace RosBridge_old
                 if (this.rosMessageStrings.Count() > 0)
                  {                    
                     MaybeLog ("Try to dequeue...");
+                    //messageCount++;
                     //lock (syncObjMessageQueue) // TODO check if the lock is needed
                     //{                    
                     this.DeserializeJSONstringHard(rosMessageStrings.Dequeue());                    
@@ -577,7 +579,7 @@ namespace RosBridge_old
         public string CreateRosMessageString(RosMessage_old msg){
             string messageString = "";
             if (msg.op == "subscribe") {
-                Maybelog("CreateRosMessageStrings...");
+                MaybeLog("CreateRosMessageStrings...");
                 messageString = "{ \"op\": \"";
                 messageString += msg.op;
                 messageString += "\", ";
@@ -731,40 +733,40 @@ namespace RosBridge_old
        public void DeserializeJSONstringHard(string message){
             //this.statusHUDText.text = "" + jointCount++;
             //if (verbose) this.debugHUDText.text = "\n processing string..." + this.debugHUDText.text;
-            //MaybeLog ("Try to deserialize: " + message);
-
+            //MaybeLog ("Try to deserialize: " + message);            
 #if WINDOWS_UWP
 
-            // if (message.Contains("joint_states") || message.Contains("preview_publisher")) {
-            if (message.Contains("hololens/planned_joint_states")) {                
-                jsonObject = JsonObject.Parse(message);
-            
+            // if (message.Contains("joint_states") || message.Contains("preview_publisher")) {            
+            if (message.Contains("planned_joint_states")) {                
+                jsonObject = JsonObject.Parse(message);                
                 JsonArray jnarray = jsonObject["msg"].GetObject()["name"].GetArray();                
-                JsonArray jparray = jsonObject["msg"].GetObject()["position"].GetArray();
-
+                JsonArray jparray = jsonObject["msg"].GetObject()["position"].GetArray();                
                 string[] names = new string[jnarray.Count];                
                 double[] positions = new double[jparray.Count];
-
+                
                 for (int i = 0; i < jnarray.Count; i++)
                 {
                     names[i] = jnarray[i].GetString();
-                }
+                }                
                 for (int i = 0; i < jparray.Count; i++)
                 {
                     positions[i] = jparray[i].GetNumber();
                 }                
-
                 latestJointState.name = names;
-                latestJointState.position = positions;
+                latestJointState.position = positions;                
             }
+            
             else if (message.Contains("hololens/state")){
+                //messageCount++;
                 jsonObject = JsonObject.Parse(message);
 
                 previousPlanningStatus = latestPlanningStatus;
-                latestPlanningStatus = (int) jsonObject["msg"].GetObject()["data"].GetNumber();
+                latestPlanningStatus = (int) jsonObject["msg"].GetObject()["val"].GetNumber();
 
+                //latestPlanningStatus = (int) 
+                //jsonObject["msg"].GetObject()["data"].GetNumber();
                 //TODO show planning results in a temporary message
-            }
+            }            
             /* TODO
             else if (message.Contains("planned_successful")) {
                 bool success = jsonObject["msg"].GetObject()["data"].GetBoolean();
