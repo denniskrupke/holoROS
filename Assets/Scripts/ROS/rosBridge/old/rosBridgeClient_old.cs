@@ -33,18 +33,10 @@ using Newtonsoft.Json;
 
 namespace RosBridge_old
 {
-    /* TODO:
-		- automatic reconnect
-		- latest frame buffers (robot state, image, point cloud, ...)
-	*/
-    class RosBridgeClient_old {
-        //public static readonly string ROSBRIDGE_IP = "134.100.13.189";//"134.100.13.202";//203";
-        public static readonly string ROSBRIDGE_IP = "134.100.13.158";//"134.100.13.223";//"134.100.13.202"; //Real UR-5
-        //public static readonly string ROSBRIDGE_IP = "134.100.13.121";//"134.100.13.202";// Virtual Robot Model
-        //public static readonly string ROSBRIDGE_PORT = "8080";
-        public static readonly string ROSBRIDGE_PORT = "9090";
 
-        //public string SomeString { get; private set; }
+    class RosBridgeClient_old {        
+        public static readonly string ROSBRIDGE_IP = "134.100.13.158";//"134.100.13.223";//"134.100.13.202"; //Real UR-5
+        public static readonly string ROSBRIDGE_PORT = "9090";        
 
 
 #if WINDOWS_UWP        
@@ -309,16 +301,11 @@ namespace RosBridge_old
         //The MessageReceived event handler. DON'T ACCESS CANVAS!!!!
         private void WebSock_MessageReceived(MessageWebSocket sender, MessageWebSocketMessageReceivedEventArgs args)
         {           
-           DataReader messageReader = args.GetDataReader();
-           messageReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
-           messageReader.ByteOrder = ByteOrder.LittleEndian;
-           incomingMessageString = messageReader.ReadString(messageReader.UnconsumedBufferLength);
-            //  this.debugHUDText.text += "\n";
-            //this.debugHUDText.text = "\n Received..." + messageString + this.debugHUDText.text;
-            //Debug.Log("ReceivedString://"+messageString+"//");
-            ReceiveAndEnqueue(incomingMessageString);
-            //Add code here to do something with the string that is received.
-                    
+            DataReader messageReader = args.GetDataReader();
+            messageReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+            messageReader.ByteOrder = ByteOrder.LittleEndian;
+            incomingMessageString = messageReader.ReadString(messageReader.UnconsumedBufferLength);
+            ReceiveAndEnqueue(incomingMessageString);                                
         }
 
         //The Closed event handler
@@ -326,17 +313,6 @@ namespace RosBridge_old
         {
             //Add code here to do something when the connection is closed locally or by the server
         }
-/*
-        //Send a message to the server.
-        private async Task WebSock_SendMessage(MessageWebSocket webSock, string message)
-        {
-            //this.debugHUDText.text += "\n";
-            //this.debugHUDText.text += "Sending..."+message;
-            DataWriter messageWriter = new DataWriter(webSock.OutputStream);
-            //messageWriter.WriteString(message);
-            await messageWriter.StoreAsync();
-        }
-*/
 #else
         // connects with the ROSbridge server
         private void Connect(string uri) {
@@ -390,26 +366,17 @@ namespace RosBridge_old
 #if WINDOWS_UWP
        // works 
         private async void Send(RosMessage_old message){
-			    MaybeLog("Send ROSmessage...");
-                if (verbose) this.debugHUDText.text = "\n Send ROSmessage..." + this.debugHUDText.text;            		         
-			DataWriter messageWriter = new DataWriter(webSock.OutputStream);
-                if (verbose) this.debugHUDText.text = "\n Created dataWriter" + this.debugHUDText.text;
-            string messageString = CreateRosMessageString(message);
-                if (verbose) this.debugHUDText.text = "\n Message: " + messageString + " " + this.debugHUDText.text;
-            messageWriter.WriteString(messageString);
-                if (verbose) this.debugHUDText.text = "\n Message written" + this.debugHUDText.text;
-                if (verbose) this.debugHUDText.text = "\n storeAsync" + this.debugHUDText.text;
-            await messageWriter.StoreAsync();
-                if (verbose) this.debugHUDText.text = "\n flushAsync" + this.debugHUDText.text;
-            await messageWriter.FlushAsync();
-                if (verbose) this.debugHUDText.text = "\n detach stream" + this.debugHUDText.text;
-            messageWriter.DetachStream();
-                if (verbose) this.debugHUDText.text = "\n done" + this.debugHUDText.text;                     
+			MaybeLog("Send ROSmessage...");                
+			DataWriter messageWriter = new DataWriter(webSock.OutputStream);                
+            string messageString = CreateRosMessageString(message);                
+            messageWriter.WriteString(messageString);                
+            await messageWriter.StoreAsync();                
+            await messageWriter.FlushAsync();                
+            messageWriter.DetachStream();                
         }
 #else
         private void Send(RosMessage_old message) {
-            MaybeLog("Send ROSmessage...");
-            //Debug.Log (CreateRosMessageString (message));
+            MaybeLog("Send ROSmessage...");            
             byte[] buffer = encoder.GetBytes(CreateRosMessageString(message));
             /*
 			rosBridgeWebSocket.Send(buffer);
@@ -418,12 +385,11 @@ namespace RosBridge_old
 #endif
 
         private void ReceiveAndEnqueue(string message) {            
-            //MaybeLog("Receive...");
+            MaybeLog("Receive...");
             if (!string.IsNullOrEmpty(message)) {          
                 lock (syncObjMessageQueue) {                                        
-                    this.rosMessageStrings.Enqueue(message);
-                    //this.debugHUDText.text = "\n" + message + this.debugHUDText.text;
-                    //MaybeLog("numberOfMessagesInQueue: " + rosMessageStrings.Count());
+                    this.rosMessageStrings.Enqueue(message);                    
+                    MaybeLog("numberOfMessagesInQueue: " + rosMessageStrings.Count());
                 }
             }
         }
@@ -441,10 +407,7 @@ namespace RosBridge_old
 
 #if WINDOWS_UWP
                 //private void Communicate(int taskNum, CancellationToken ct){ 
-                public void Communicate(){
-                    //if (verbose) this.debugHUDText.text = "\n COMMUNICATE" + this.debugHUDText.text; 
-                    //MaybeLog ("--- inside communicate ---");
-
+                public void Communicate(){                                        
                    // if (ct.IsCancellationRequested) {
                     //    MaybeLog("Task {"+ (taskNum-1) +"} cancelled");
                      //   ct.ThrowIfCancellationRequested();
@@ -453,21 +416,18 @@ namespace RosBridge_old
                     if (!IsConnected())
                     {
                         MaybeLog("Try to connect with ROSbridge..."); 
-                        Connect();
-                        if (verbose) this.debugHUDText.text = "\n is not connected" + this.debugHUDText.text;
+                        Connect();                        
                         //Task.Delay(2000).Wait();                                            
                     }                                        
                     else {
-                        MaybeLog ("...connect done!");
-                        if (verbose) this.debugHUDText.text = "\n is connected" + this.debugHUDText.text;                        
+                        MaybeLog ("...connect done!");                        
                     }                    
                 }
 
 #else
         // starts the communication: connects and subscribes to topics
         public void Communicate()
-        {
-            MaybeLog("--- inside communicate ---");
+        {            
             if (!IsConnected())
             {
                 MaybeLog("Try to connect with ROSbridge...");
@@ -498,19 +458,15 @@ namespace RosBridge_old
 
         
     public void SubscribeToTopics(){
-#if WINDOWS_UWP
-        //this.debugHUDText.text = "\n Subscribing..." + this.debugHUDText.text;
+#if WINDOWS_UWP        
         if(RosBridgeClient_old.imageStreaming) {
-            MaybeLog ("Subscribing to /camera/rgb/image_rect_color/compressed");
-            if (verbose) this.debugHUDText.text = "\n Subscribing to /camera/rgb/image_rect_color/compressed" + this.debugHUDText.text;            
-            //Send(new RosSubscribe("/camera/rgb/image_rect_color/compressed", "sensor_msgs/CompressedImage"));
+            MaybeLog ("Subscribing to /camera/rgb/image_rect_color/compressed");            
+            Send(new RosSubscribe("/camera/rgb/image_rect_color/compressed", "sensor_msgs/CompressedImage"));
         }
         if (RosBridgeClient_old.jointStates) {
-            //Send(new RosSubscribe_old("/preview_publisher", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
+            // Send(new RosSubscribe_old("/preview_publisher", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
             // Send(new RosSubscribe_old("/robot/joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
-            Send(new RosSubscribe_old("/hololens/planned_joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0
-            // if (verbose) this.debugHUDText.text = "\n Send subscribe message" + this.debugHUDText.text;
-            //this.debugHUDText.text = "\n Enqueued subscribe message" + this.debugHUDText.text;                
+            Send(new RosSubscribe_old("/hololens/planned_joint_states", "sensor_msgs/JointState", 100)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0                        
         }
         // if (RosBridgeClient_old.handTrackingAprilTags) {        
             // Send(new RosSubscribe_old("/handDirectionPointer", "std_msgs/Float32MultiArray"));            
@@ -592,13 +548,12 @@ namespace RosBridge_old
         {
            while (processMessageQueue)                
             {         
-                //MaybeLog ("ProcessRosMessageQueue...");                
+                MaybeLog ("ProcessRosMessageQueue...");                
                 if (this.rosMessageStrings.Count() > 0)
                  {                    
-                    //MaybeLog ("Try to dequeue...");
+                    MaybeLog ("Try to dequeue...");
                     //lock (syncObjMessageQueue) // TODO check if the lock is needed
-                    //{
-                        //MaybeLog ("Dequeue...");                                      
+                    //{                    
                     this.DeserializeJSONstringHard(rosMessageStrings.Dequeue());                    
 #if WINDOWS_UWP
                         //                        TODO: mertke
@@ -622,7 +577,7 @@ namespace RosBridge_old
         public string CreateRosMessageString(RosMessage_old msg){
             string messageString = "";
             if (msg.op == "subscribe") {
-                if (verbose) this.debugHUDText.text = "\n CreateRosMessageStrings..." + this.debugHUDText.text;                
+                Maybelog("CreateRosMessageStrings...");
                 messageString = "{ \"op\": \"";
                 messageString += msg.op;
                 messageString += "\", ";
@@ -635,7 +590,7 @@ namespace RosBridge_old
             }
             else if (msg.op == "publish") {
                 if(msg.topic == "/hololens/plan_pick"){
-                    //TODO
+                    
                     messageString = "{ \"op\": \"";
                         messageString += msg.op;
                         messageString += "\", ";
@@ -645,16 +600,16 @@ namespace RosBridge_old
                         messageString += "\"msg\": ";
                         messageString += "{";
                         RosMessages_old.geometry_msgs.PointStamped_old ps = (RosMessages_old.geometry_msgs.PointStamped_old)((RosPublish_old)msg).msg;
-                            //Header_old header = ps.header;
+                            
                             messageString += "\"header\": ";
                             messageString += "{";                        
                                 messageString += "\"stamp\": ";
                                 messageString += "{";
                                     messageString += "\"secs\": ";
-                    messageString += 0;// ps.header.stamp.secs;
+                    messageString += 0;
                                     messageString += " ,";
                                     messageString += "\"nsecs\": ";
-                    messageString += 0;// ps.header.stamp.nsecs;
+                    messageString += 0;
                                 messageString += "}";
                                 messageString += " ,";
                                 messageString += "\"frame_id\": ";
@@ -664,7 +619,7 @@ namespace RosBridge_old
                                 messageString += ps.header.seq;                        
                             messageString += "}";
                         messageString += " ,";
-                    //RosMessages_old.geometry_msgs.Point_old point = ps.point;
+
                         messageString += "\"point\": ";
                             messageString += "{";
                                 messageString += "\"x\": ";
@@ -680,8 +635,7 @@ namespace RosBridge_old
                     messageString += "}";
                 }
                 else if (msg.topic == "/hololens/plan_place")
-                {
-                    //TODO
+                {                    
                     messageString = "{ \"op\": \"";
                     messageString += msg.op;
                     messageString += "\", ";
@@ -691,23 +645,23 @@ namespace RosBridge_old
                     messageString += "\"msg\": ";
                     messageString += "{";
                     RosMessages_old.geometry_msgs.PointStamped_old ps = (RosMessages_old.geometry_msgs.PointStamped_old)((RosPublish_old)msg).msg;
-                    //Header_old header = ps.header;
+                    
                     messageString += "\"header\": ";
                     messageString += "{";
                     messageString += "\"stamp\": ";
                     messageString += "{";
                     messageString += "\"secs\": ";
-                    messageString += 0;// ps.header.stamp.secs;
+                    messageString += 0;
                     messageString += " ,";
                     messageString += "\"nsecs\": ";
-                    messageString += 0;// ps.header.stamp.nsecs;
+                    messageString += 0;
                     messageString += "}";                   
                     messageString += " ,";
                     messageString += "\"seq\": ";
                     messageString += ps.header.seq;
                     messageString += "}";
                     messageString += " ,";
-                    //RosMessages_old.geometry_msgs.Point_old point = ps.point;
+
                     messageString += "\"point\": ";
                     messageString += "{";
                     messageString += "\"x\": ";
@@ -722,8 +676,7 @@ namespace RosBridge_old
                     messageString += "}";
                     messageString += "}";
                 }
-                else if(msg.topic == "/hololens/execute_pick"){
-                    //TODO
+                else if(msg.topic == "/hololens/execute_pick"){                    
                     messageString = "{ \"op\": \"";
                         messageString += msg.op;
                         messageString += "\", ";
@@ -736,8 +689,7 @@ namespace RosBridge_old
                     messageString += "}";
                 }
                 else if (msg.topic == "/hololens/execute_place")
-                {
-                    //TODO
+                {                    
                     messageString = "{ \"op\": \"";
                     messageString += msg.op;
                     messageString += "\", ";
@@ -749,8 +701,7 @@ namespace RosBridge_old
                     messageString += "}";
                     messageString += "}";
                 }
-                else if(msg.topic == "/hololens_open_gripper"){
-                    //TODO
+                else if(msg.topic == "/hololens_open_gripper"){                    
                     messageString = "{ \"op\": \"";
                         messageString += msg.op;
                         messageString += "\", ";
@@ -761,29 +712,10 @@ namespace RosBridge_old
                         messageString += "{";
                         messageString += "}";
                     messageString += "}";
-                }
-                // if (verbose) this.debugHUDText.text = "\n CreateRosMessageStrings..." + this.debugHUDText.text;                
-                // messageString = "{ \"op\": \"";
-                // messageString += msg.op;
-                // messageString += "\", ";
-                // messageString += "\"topic\": \"";
-                // messageString += msg.topic;
-                // messageString += "\", ";
-                // messageString += "\"msg\": ";
-                // messageString += "{";
-                // messageString += "\"data\": ";
-                // messageString += "[";
-                // messageString += ((Float32MultiArray_old)((RosPublish_old)msg).msg).data[0];
-                // messageString += " ,";
-                // messageString += ((Float32MultiArray_old)((RosPublish_old)msg).msg).data[1];
-                // messageString += " ,";
-                // messageString += ((Float32MultiArray_old)((RosPublish_old)msg).msg).data[2];                
-                // messageString += "]";
-                // messageString += "}";
-                // messageString += "}";
+                }                
             }
 
-            return messageString;//JsonConvert.SerializeObject(msg);
+            return messageString;
        }
 #else
         // serializes a RosMessage to a string
@@ -945,7 +877,11 @@ namespace RosBridge_old
         {
             if (verbose)
             {
+                #if WINDOWS_UWP
+                this.debugHUDText.text = "\n" + logstring + this.debugHUDText.text;
+                #else
                 Debug.Log(logstring);
+                #endif
             }
         }
 
