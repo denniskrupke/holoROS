@@ -16,17 +16,13 @@ public class PlanningPlace_State : ExperimentState
 
     bool next = false;
 
-    public bool Next
-    {
-        get
-        {
-            return next;
-        }
-
-        set
-        {
-            next = value;
-        }
+    public override bool GetNext(){
+        return next;
+    }
+    
+    public override void SetNext(bool val)
+    {        
+        next = val;
     }
 
     public override ExperimentState HandleInput(ExperimentController ec)
@@ -42,8 +38,9 @@ public class PlanningPlace_State : ExperimentState
         }
         next = true;
 
-        if(Next)
+        if(next)
         {
+            next = false;
             return nextStates[nextStateIndex];
         }
         else
@@ -55,11 +52,6 @@ public class PlanningPlace_State : ExperimentState
     public override void UpdateState(ExperimentController ec)
     {       
         text.text = "planning place";
-        tableTopCollider.enabled = true;
-        if (triggerNextState)
-        {
-            next = true;
-            triggerNextState = false;
-        }
+        tableTopCollider.enabled = true;        
     }
 }

@@ -13,17 +13,13 @@ public class Picked_State : ExperimentState
 
     bool next = false;
 
-    public bool Next
-    {
-        get
-        {
-            return next;
-        }
-
-        set
-        {
-            next = value;
-        }
+    public override bool GetNext(){
+        return next;
+    }
+    
+    public override void SetNext(bool val)
+    {        
+        next = val;
     }
 
     public override ExperimentState HandleInput(ExperimentController ec)
@@ -31,8 +27,9 @@ public class Picked_State : ExperimentState
         nextStateIndex = 0;//picked
         if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT) next = true;
 
-        if(Next)
+        if(next)
         {
+            next = false;
             return nextStates[nextStateIndex];
         }
         else
@@ -43,11 +40,6 @@ public class Picked_State : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {        
-        text.text = "";
-        if (triggerNextState)
-        {
-            next = true;
-            triggerNextState = false;
-        }
+        text.text = "";        
     }
 }

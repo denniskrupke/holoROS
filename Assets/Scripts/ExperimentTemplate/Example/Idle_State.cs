@@ -12,28 +12,28 @@ public class Idle_State : ExperimentState
     [SerializeField]
     RosBridge_old.RosBridgeClient_old rosbridgeClient;
 
+    [SerializeField]
+    Collider tableTopCollider;
+
    
     bool next = false;    
 
-    public bool Next
-    {
-        get
-        {
-            return next;
-        }
+    public override bool GetNext(){
+        return next;
+    }
 
-        set
-        {
-            next = value;
-        }
+    public override void SetNext(bool val)
+    {        
+        next = val;
     }
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {
         nextStateIndex = 0;        
 
-        if(Next)
+        if(next)
         {
+            next = false;
             return nextStates[nextStateIndex];
         }
         else
@@ -45,10 +45,6 @@ public class Idle_State : ExperimentState
     public override void UpdateState(ExperimentController ec)
     {
         text.text = "idle";
-        if (triggerNextState)
-        {
-            next = true;
-            triggerNextState = false;
-        }
+        tableTopCollider.enabled = false;        
     }
 }

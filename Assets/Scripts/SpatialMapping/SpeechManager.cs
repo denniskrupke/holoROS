@@ -18,9 +18,7 @@ public class SpeechManager : MonoBehaviour
     StateController sc;
  
     void Start()
-    {
-        
-
+    {        
         //keywords.Add("Mode", () =>
         //{            
         //    this.BroadcastMessage("OnChangeMethod");
@@ -36,32 +34,28 @@ public class SpeechManager : MonoBehaviour
 
         keywords.Add("Pick", () =>
         {
-            // Triggers pick-point extraction, message creation and enqueueing
-            //this.BroadcastMessage("OnPickUp()");
+            // Triggers pick-point extraction, message creation and enqueueing            
             this.setTransform.OnPickUp();
             lastCommand = "Pick";
-            sc.CurrentState.triggerNextState = true;
+            sc.CurrentState.Next = true;
         });
 
         keywords.Add("Execute", () =>
         {
-            // Triggers execution of previously planned actions
-            //this.BroadcastMessage("OnConfirmPick()");
-            
+            // Triggers execution of previously planned actions            
             if(lastCommand == "Pick") this.setTransform.OnConfirmPick();
             else if(lastCommand == "Place") this.setTransform.OnConfirmPlace();
             lastCommand = "Execute";
-            sc.CurrentState.triggerNextState = true;
+            sc.CurrentState.Next = true;
         });
        
 
         keywords.Add("Place", () =>
         {
-            // Triggers place-point extraction, message creation and enqueueing
-            //this.BroadcastMessage("OnPlace()");
+            // Triggers place-point extraction, message creation and enqueueing            
             this.setTransform.OnPlace();
             lastCommand = "Place";
-            sc.CurrentState.triggerNextState = true;
+            sc.CurrentState.Next = true;
         });
 
 

@@ -28,6 +28,7 @@ public class SetTransform : MonoBehaviour {
     public Transform tableTop = null;
 
     private Vector3 lastPlacePos;
+    private GameObject objectWithTargetMarker = null;
     
 	// Use this for initialization
 	void Start () {
@@ -39,7 +40,6 @@ public class SetTransform : MonoBehaviour {
 		
 	}
 
-    
     public void OnPickUp(){        
         //object1, object2, object3
         //this.transform.position = new Vector3(objectSelectionManager.CurrentSelectedObject.transform.position.x, cursor.transform.position.y, objectSelectionManager.CurrentSelectedObject.transform.position.z);
@@ -57,7 +57,8 @@ public class SetTransform : MonoBehaviour {
         ps.point.z = invPos.y;        
         Header_old h = new Header_old();        
         ps.header = h;        
-        ps.header.frame_id = objectSelectionManager.CurrentSelectedObject.name;        
+        ps.header.frame_id = objectSelectionManager.CurrentSelectedObject.name;  
+        objectWithTargetMarker = selectionManager.CurrentSelectedObject;      
         rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens/plan_pick", ps));        
     }
 
@@ -67,14 +68,14 @@ public class SetTransform : MonoBehaviour {
         // TODO
         this.lastPlacePos = cursor.transform.position;
         lastPlacePos.y += 0.129f;
-        objectSelectionManager.CurrentSelectedObject.transform.position = lastPlacePos;
+        objectWithTargetMarker.transform.position = lastPlacePos;
 
         Vector3 invPos = cursor.transform.position - tableTop.position;
         RosMessages_old.geometry_msgs.PointStamped_old ps = new RosMessages_old.geometry_msgs.PointStamped_old();
         RosMessages_old.geometry_msgs.Point_old p = new RosMessages_old.geometry_msgs.Point_old();
         ps.point = p;
-        ps.point.x = -invPos.z;
-        ps.point.y = invPos.x;
+        ps.point.x = invPos.x;      //TODO check the order of the coordinates!!!
+        ps.point.y = -invPos.z;
         ps.point.z = invPos.y;
         Header_old h = new Header_old();
         ps.header = h;        
@@ -91,6 +92,9 @@ public class SetTransform : MonoBehaviour {
         RosMessages_old.std_msgs.Empty_old confirm = new RosMessages_old.std_msgs.Empty_old();
         rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens/execute_place", confirm));
     }
+
+
+/*
 
     public void OnOpenGripper(){
         RosMessages_old.std_msgs.Empty_old confirm = new RosMessages_old.std_msgs.Empty_old();        
@@ -155,4 +159,5 @@ public class SetTransform : MonoBehaviour {
         pose.data = data;
         rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/unity_arm_control", pose));
     }
+    */
 }

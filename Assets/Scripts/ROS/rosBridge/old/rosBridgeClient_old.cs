@@ -420,9 +420,7 @@ namespace RosBridge_old
         private void ReceiveAndEnqueue(string message) {            
             //MaybeLog("Receive...");
             if (!string.IsNullOrEmpty(message)) {          
-                lock (syncObjMessageQueue) {
-                    //this.statusHUDText.text = "A:";
-                    //messageCount++;
+                lock (syncObjMessageQueue) {                                        
                     this.rosMessageStrings.Enqueue(message);
                     //this.debugHUDText.text = "\n" + message + this.debugHUDText.text;
                     //MaybeLog("numberOfMessagesInQueue: " + rosMessageStrings.Count());
@@ -430,8 +428,7 @@ namespace RosBridge_old
             }
         }
 
-        public void EnqueRosCommand(RosMessage_old message) {
-            //this.statusHUDText.text = "" + "enqueue";
+        public void EnqueRosCommand(RosMessage_old message) {            
             //if (verbose) this.debugHUDText.text = "\n Try to get token..." + this.debugHUDText.text;
            // lock (syncObjCommandQueue) {
                 //if (verbose) this.debugHUDText.text = "\n success" + this.debugHUDText.text;
@@ -470,7 +467,6 @@ namespace RosBridge_old
         // starts the communication: connects and subscribes to topics
         public void Communicate()
         {
-
             MaybeLog("--- inside communicate ---");
             if (!IsConnected())
             {
@@ -520,7 +516,6 @@ namespace RosBridge_old
             // Send(new RosSubscribe_old("/handDirectionPointer", "std_msgs/Float32MultiArray"));            
         // }            
             Send(new RosSubscribe_old("/hololens/state", "std_msgs/Int32", 1)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0        
-
 #endif
         }
 
