@@ -24,13 +24,10 @@ public class Picked_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {
-        nextStateIndex = 0;//picked
-        if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT) next = true;
-
         if(next)
         {
             next = false;
-            return nextStates[nextStateIndex];
+            return nextStates[0]; //planningPlace
         }
         else
         {

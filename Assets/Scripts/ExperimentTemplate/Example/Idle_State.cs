@@ -29,12 +29,10 @@ public class Idle_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {
-        nextStateIndex = 0;        
-
         if(next)
         {
             next = false;
-            return nextStates[nextStateIndex];
+            return nextStates[0];//planning pick
         }
         else
         {

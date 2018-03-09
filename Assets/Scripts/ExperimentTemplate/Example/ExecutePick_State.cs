@@ -26,13 +26,15 @@ public class ExecutePick_State : ExperimentState
     }
 
     public override ExperimentState HandleInput(ExperimentController ec)
-    {
-        nextStateIndex = 0;//picked
-        if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT) next = true;
+    {        
+        if(rosbridgeClient.LatestPlanningStatus.Count > 0){
+            int status = rosbridgeClient.LatestPlanningStatus.Dequeue();
+            if(status == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT) next = true; //picked
+        }
 
         if(next)
         {
-            return nextStates[nextStateIndex];
+            return nextStates[0];//picked
         }
         else
         {

@@ -26,22 +26,19 @@ public class PlannedPick_State : ExperimentState
     }
 
     public override ExperimentState HandleInput(ExperimentController ec)
-    {
-        /*
-        if(sm.lastCommand == "Pick"){
-            nextStateIndex = 0; //planningPick
-        }
-        else if(sm.lastCommand == "Execute"){
-            nextStateIndex = 1; //executePick
-        }
-        
+    {        
         if(next)
         {
+            if(sm.lastCommand == "Pick"){
+                nextStateIndex = 0; //planningPick
+            }
+            else if(sm.lastCommand == "Execute"){
+                nextStateIndex = 1; //executePick
+            }
             next = false;
             return nextStates[nextStateIndex];
         }
        
-        */
         return this;
     }
 

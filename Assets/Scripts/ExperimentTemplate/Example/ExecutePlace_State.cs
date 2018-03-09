@@ -24,12 +24,10 @@ public class ExecutePlace_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {
-        nextStateIndex = 0; //idle
-
         if(next)
         {
             next = false;
-            return nextStates[nextStateIndex];
+            return nextStates[0]; //idle
         }
         else
         {

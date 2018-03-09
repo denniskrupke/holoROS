@@ -44,9 +44,12 @@ public class SpeechManager : MonoBehaviour
         {
             // Triggers execution of previously planned actions            
             if(lastCommand == "Pick") this.setTransform.OnConfirmPick();
-            else if(lastCommand == "Place") this.setTransform.OnConfirmPlace();
+            else if(lastCommand == "Place") {
+                this.setTransform.OnConfirmPlace();
+                sc.CurrentState.SetNext(true);
+            }
             lastCommand = "Execute";
-            sc.CurrentState.SetNext(true);
+            
         });
        
 
@@ -55,7 +58,7 @@ public class SpeechManager : MonoBehaviour
             // Triggers place-point extraction, message creation and enqueueing            
             this.setTransform.OnPlace();
             lastCommand = "Place";
-            sc.CurrentState.SetNext(true);
+            if((sc.CurrentState.GetType() == typeof(PlannedPlace_State)) || (sc.CurrentState.GetType() == typeof(Picked_State))) sc.CurrentState.SetNext(true);
         });
 
 

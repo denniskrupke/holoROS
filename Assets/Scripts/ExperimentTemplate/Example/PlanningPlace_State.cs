@@ -27,16 +27,28 @@ public class PlanningPlace_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {
-        if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){
-            if(ec.PreviousState.GetType() == typeof(PlannedPlace_State)){
-                nextStateIndex = 1; //PlannedPlace
+
+        if(rosbridgeClient.LatestPlanningStatus.Count > 0){
+            int status = rosbridgeClient.LatestPlanningStatus.Dequeue();
+            if(status == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){
+                // TODO show fail message here
+                if(ec.PreviousState.GetType() == typeof(PlannedPlace_State)){
+                    nextStateIndex = 1; //PlannedPlace
+                    next = true;
+                }
+                else {
+                    nextStateIndex = 0; //Picked
+                    next = true;
+                }
             }
-            else nextStateIndex = 0; //Picked
+            else if(status == RosMessages_old.std_msgs.Int32_old.SUCCESS){
+                // TODO show success message here
+            }
+            else if (status == RosMessages_old.std_msgs.Int32_old.PLANNED_PLACE){
+                nextStateIndex = 1; //PlannedPlace
+                next = true;
+            }
         }
-        else if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.SUCCESS){
-            nextStateIndex = 1; //PlannedPlace
-        }
-        next = true;
 
         if(next)
         {

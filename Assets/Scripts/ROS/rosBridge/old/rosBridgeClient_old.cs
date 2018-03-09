@@ -107,23 +107,19 @@ namespace RosBridge_old
 
         private string incomingMessageString = "";
 
-        private int latestPlanningStatus;
-        private int previousPlanningStatus;
+        private Queue<int> latestPlanningStatus;
+        //private int previousPlanningStatus;
 
 
-        public int LatestPlanningStatus
+        public Queue<int> LatestPlanningStatus
         {
             get 
             {
                 return latestPlanningStatus;
-            }
-
-            set
-            {
-                latestPlanningStatus = value;
-            }
+            }            
         }
 
+/*
         public int PreviousPlanningStatus
         {
             get 
@@ -136,6 +132,7 @@ namespace RosBridge_old
                 previousPlanningStatus = value;
             }
         }
+        */
 
         public string IncomingMessageString
         {
@@ -192,6 +189,8 @@ namespace RosBridge_old
             asyncWorkerCommunication = Task.Factory.StartNew(() => Communicate(1,token));
             */
             asyncWorkerCommunication = Task.Factory.StartNew(() => Communicate());
+            asyncWorkerMessageProcessing = Task.Factory.StartNew(() => ProcessRosMessageQueue());
+            asyncWorkerCommandProcessing = Task.Factory.StartNew(() => ProcessRosCommandQueue());
             /*
             tasks.Add(asyncWorkerCommunication);
             MaybeLog("Task {0} executing " + asyncWorkerCommunication.Id);
@@ -200,40 +199,16 @@ namespace RosBridge_old
 #else
             asyncWorkerCommunication = new Thread(new ThreadStart(Communicate));
             asyncWorkerCommunication.Start();
-#endif
 
             // thread for processing incoming messages
-            //MaybeLog("Starting message processing thread...");           
-            //if (verbose) this.debugHUDText.text = "\n Starting message processing thread..." + this.debugHUDText.text;
-
-#if WINDOWS_UWP
-            asyncWorkerMessageProcessing = Task.Factory.StartNew(() => ProcessRosMessageQueue());
-            /*
-             asyncWorkerMessageProcessing = Task.Factory.StartNew(() => ProcessRosMessageQueue(2,token));
-             tasks.Add(asyncWorkerMessageProcessing);
-             MaybeLog("Task {1} executing " + asyncWorkerMessageProcessing.Id);
-            */
-            //if (verbose) this.debugHUDText.text = "\n ...done" + this.debugHUDText.text;
-#else
             asyncWorkerMessageProcessing = new Thread(new ThreadStart(ProcessRosMessageQueue));
             asyncWorkerMessageProcessing.Start();
-#endif
 
             // thread for sending messages to the remote robot side
-            //MaybeLog("Starting command processing thread...");            
-            //if (verbose) this.debugHUDText.text = "\n Starting command processing thread..." + this.debugHUDText.text;
-#if WINDOWS_UWP
-            asyncWorkerCommandProcessing = Task.Factory.StartNew(() => ProcessRosCommandQueue());
-            /*
-             asyncWorkerCommandProcessing = Task.Factory.StartNew(() => ProcessRosCommandQueue(3,token));
-             tasks.Add(asyncWorkerCommandProcessing);
-             MaybeLog("Task {2} executing " + asyncWorkerCommandProcessing.Id);
-            */
-            //if (verbose) this.debugHUDText.text = "\n ...done" + this.debugHUDText.text;
-#else
             asyncWorkerCommandProcessing = new Thread(new ThreadStart(ProcessRosCommandQueue));
             asyncWorkerCommandProcessing.Start();
 #endif
+
         }
 
         // TODO: Stops all Tasks
@@ -760,8 +735,8 @@ namespace RosBridge_old
                 //messageCount++;
                 jsonObject = JsonObject.Parse(message);
 
-                previousPlanningStatus = latestPlanningStatus;
-                latestPlanningStatus = (int) jsonObject["msg"].GetObject()["val"].GetNumber();
+                //previousPlanningStatus = latestPlanningStatus;
+                latestPlanningStatus.enqueue((int) jsonObject["msg"].GetObject()["val"].GetNumber());
 
                 //latestPlanningStatus = (int) 
                 //jsonObject["msg"].GetObject()["data"].GetNumber();

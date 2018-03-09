@@ -26,16 +26,15 @@ public class PlannedPlace_State : ExperimentState
     }
 
     public override ExperimentState HandleInput(ExperimentController ec)
-    {
-        if(sm.lastCommand == "Place"){
-            nextStateIndex = 0; //planningPlace
-        }
-        else if(sm.lastCommand == "Execute"){
-            nextStateIndex = 1; //executePlace
-        }
-
+    {        
         if(next)
         {
+            if(sm.lastCommand == "Place"){
+                nextStateIndex = 0; //planningPlace
+            }
+            else if(sm.lastCommand == "Execute"){
+                nextStateIndex = 1; //executePlace
+            }
             next = false;
             return nextStates[nextStateIndex];
         }
