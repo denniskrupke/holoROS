@@ -6,10 +6,7 @@ using System;
 public class Picked_State : ExperimentState
 {    
     [SerializeField]
-    Text text;
-
-    [SerializeField]
-    RosBridge_old.RosBridgeClient_old rosbridgeClient;
+    Text text;    
 
     bool next = false;
 
@@ -37,6 +34,6 @@ public class Picked_State : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {        
-        text.text = "";        
+        text.text = "picked";        
     }
 }

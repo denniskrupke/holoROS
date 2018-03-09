@@ -8,8 +8,8 @@ public class ExecutePick_State : ExperimentState
     [SerializeField]
     Text text;
 
-    [SerializeField]
-    RosBridge_old.RosBridgeClient_old rosbridgeClient;
+    [SerializeField]  
+    ros2unityManager rum;
 
     [SerializeField]
     Collider tableTopCollider;  
@@ -27,8 +27,8 @@ public class ExecutePick_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {        
-        if(rosbridgeClient.LatestPlanningStatus.Count > 0){
-            int status = rosbridgeClient.LatestPlanningStatus.Dequeue();
+        if(rum.RosBridge.latestPlanningStatus.Count > 0){
+            int status = rum.RosBridge.latestPlanningStatus.Dequeue();
             if(status == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT) next = true; //picked
         }
 
@@ -44,7 +44,7 @@ public class ExecutePick_State : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {        
-        text.text = "executing";
+        text.text = "executing pick";
         tableTopCollider.enabled = true;         
     }
 }

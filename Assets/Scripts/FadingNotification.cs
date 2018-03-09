@@ -12,8 +12,7 @@ public class FadingNotification : MonoBehaviour
 
 	[SerializeField]
 	long defaultDuration; //in seconds
-
-	private string message;
+	
 	private bool showMessage;
 	private float startTime;
 
@@ -29,20 +28,21 @@ public class FadingNotification : MonoBehaviour
 			startTime = Time.realtimeSinceStartup;		
 			showMessage = false;
 		}
-
-		if(Time.time > (startTime+defaultDuration)){
+        
+		if(Time.realtimeSinceStartup < (startTime+defaultDuration)){
 			float timeLeft = (startTime+defaultDuration) - Time.realtimeSinceStartup;
-			float val = (defaultDuration-timeLeft)/defaultDuration;
-			notificationCanvas.gameObject.SetActive(false);
+			float val = (defaultDuration-timeLeft)/defaultDuration;			
 			Color color = text.color;
-			color.a = val * 255.0f;
+			color.a = 1-val;
 			text.color = color;
-		}
-	}
+		}       
+        else notificationCanvas.gameObject.SetActive(false);
+    }
 
-	public void ShowMessage(string message){
-		this.message = message;
-		this.showMessage = true;
+	public void ShowMessage(string message, Color col){
+		text.text = message;
+        text.color = col;
+		showMessage = true;
 	}
 
 }

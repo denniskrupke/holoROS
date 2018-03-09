@@ -8,11 +8,13 @@ public class PlannedPlace_State : ExperimentState
     [SerializeField]
     Text text;
 
-    [SerializeField]
-    RosBridge_old.RosBridgeClient_old rosbridgeClient;
+    string ms = "planned place";
 
     [SerializeField]
     SpeechManager sm;
+
+    [SerializeField]
+    ros2unityManager rum;
 
     bool next = false;
 
@@ -26,8 +28,15 @@ public class PlannedPlace_State : ExperimentState
     }
 
     public override ExperimentState HandleInput(ExperimentController ec)
-    {        
-        if(next)
+    {
+        if (rum.RosBridge.latestPlanningStatus.Count > 0)
+        {
+            int status = rum.RosBridge.latestPlanningStatus.Dequeue();
+            if (status != RosMessages_old.std_msgs.Int32_old.PLANNED_PLACE) { ms = "wrong state -> exit all"; }
+           
+        }
+
+        if (next)
         {
             if(sm.lastCommand == "Place"){
                 nextStateIndex = 0; //planningPlace
@@ -46,6 +55,6 @@ public class PlannedPlace_State : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {        
-        text.text = "";        
+        text.text = ms;        
     }
 }

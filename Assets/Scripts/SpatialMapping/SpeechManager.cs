@@ -18,47 +18,48 @@ public class SpeechManager : MonoBehaviour
     StateController sc;
  
     void Start()
-    {        
-        //keywords.Add("Mode", () =>
-        //{            
-        //    this.BroadcastMessage("OnChangeMethod");
-        //});
-
-
+    {                
         keywords.Add("Calibrate", () =>
         {           
             this.configurationManager.registration_calibration = true;
             lastCommand = "Calibrate"; 
         });
 
-
         keywords.Add("Pick", () =>
         {
+            sc.PreviousState = sc.CurrentState;
             // Triggers pick-point extraction, message creation and enqueueing            
             this.setTransform.OnPickUp();
             lastCommand = "Pick";
             if((sc.CurrentState.GetType() == typeof(PlannedPick_State)) || (sc.CurrentState.GetType() == typeof(Idle_State))) sc.CurrentState.SetNext(true);
+//          sc.CurrentState.SetNext(true);
         });
 
         keywords.Add("Execute", () =>
         {
             // Triggers execution of previously planned actions            
-            if(lastCommand == "Pick") this.setTransform.OnConfirmPick();
-            else if(lastCommand == "Place") {
+            if (sc.CurrentState.GetType() == typeof(PlannedPick_State))
+            {
+                this.setTransform.OnConfirmPick();
+                sc.CurrentState.SetNext(true);
+            }
+            else if (sc.CurrentState.GetType() == typeof(PlannedPlace_State))
+            {
                 this.setTransform.OnConfirmPlace();
                 sc.CurrentState.SetNext(true);
             }
-            lastCommand = "Execute";
             
+            lastCommand = "Execute";            
         });
        
 
         keywords.Add("Place", () =>
         {
+            sc.PreviousState = sc.CurrentState;
             // Triggers place-point extraction, message creation and enqueueing            
-            this.setTransform.OnPlace();
-            lastCommand = "Place";
+            this.setTransform.OnPlace();            
             if((sc.CurrentState.GetType() == typeof(PlannedPlace_State)) || (sc.CurrentState.GetType() == typeof(Picked_State))) sc.CurrentState.SetNext(true);
+            lastCommand = "Place";
         });
 
 

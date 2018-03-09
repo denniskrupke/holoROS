@@ -9,10 +9,14 @@ public class PlanningPlace_State : ExperimentState
     Text text;
 
     [SerializeField]
-    RosBridge_old.RosBridgeClient_old rosbridgeClient;
+    ros2unityManager rum;
+    //RosBridge_old.RosBridgeClient_old rosbridgeClient;
 
     [SerializeField]
     Collider tableTopCollider;
+
+    [SerializeField]
+    FadingNotification fn;
 
     bool next = false;
 
@@ -28,11 +32,12 @@ public class PlanningPlace_State : ExperimentState
     public override ExperimentState HandleInput(ExperimentController ec)
     {
 
-        if(rosbridgeClient.LatestPlanningStatus.Count > 0){
-            int status = rosbridgeClient.LatestPlanningStatus.Dequeue();
+        if(rum.RosBridge.latestPlanningStatus.Count > 0){
+            int status = rum.RosBridge.latestPlanningStatus.Dequeue();
             if(status == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){
                 // TODO show fail message here
-                if(ec.PreviousState.GetType() == typeof(PlannedPlace_State)){
+                fn.ShowMessage("FAIL", new Color(1, 0, 0));
+                if (ec.PreviousState.GetType() == typeof(PlannedPlace_State)){
                     nextStateIndex = 1; //PlannedPlace
                     next = true;
                 }
@@ -43,6 +48,7 @@ public class PlanningPlace_State : ExperimentState
             }
             else if(status == RosMessages_old.std_msgs.Int32_old.SUCCESS){
                 // TODO show success message here
+                fn.ShowMessage("SUCCESS", new Color(0,1,0));
             }
             else if (status == RosMessages_old.std_msgs.Int32_old.PLANNED_PLACE){
                 nextStateIndex = 1; //PlannedPlace

@@ -13,7 +13,6 @@ using RosMessages;
 #endif
 
 
-
 public class SetTransform : MonoBehaviour {
     public GameObject cursor;
     public Transform origin;
@@ -74,8 +73,8 @@ public class SetTransform : MonoBehaviour {
         RosMessages_old.geometry_msgs.PointStamped_old ps = new RosMessages_old.geometry_msgs.PointStamped_old();
         RosMessages_old.geometry_msgs.Point_old p = new RosMessages_old.geometry_msgs.Point_old();
         ps.point = p;
-        ps.point.x = invPos.x;      //TODO check the order of the coordinates!!!
-        ps.point.y = -invPos.z;
+        ps.point.x = invPos.z;      //TODO check the order of the coordinates!!!
+        ps.point.y = -invPos.y;
         ps.point.z = invPos.y;
         Header_old h = new Header_old();
         ps.header = h;        

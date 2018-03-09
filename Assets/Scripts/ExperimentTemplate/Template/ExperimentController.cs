@@ -33,6 +33,10 @@ public abstract class ExperimentController
         {
             return previousState;
         }
+        set
+        {
+            previousState = value;
+        }
     }
 
     public List<ExperimentTrial> CurrentTrials
@@ -66,7 +70,7 @@ public abstract class ExperimentController
     }
 	// Update is called once per frame
 	protected virtual void Update () {
-        previousState = currentState;
+        //previousState = currentState;
         currentState = currentState.HandleInput(this);
         currentState.UpdateState(this);
     }

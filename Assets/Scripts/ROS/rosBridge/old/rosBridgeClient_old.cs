@@ -35,7 +35,7 @@ namespace RosBridge_old
 {
 
     class RosBridgeClient_old {        
-        public static readonly string ROSBRIDGE_IP = "134.100.13.158";//"134.100.13.223";//"134.100.13.202"; //Real UR-5
+        public static readonly string ROSBRIDGE_IP = "134.100.13.122";//"134.100.13.158";////"134.100.13.202"; //Real UR-5
         public static readonly string ROSBRIDGE_PORT = "9090";        
 
 
@@ -107,17 +107,10 @@ namespace RosBridge_old
 
         private string incomingMessageString = "";
 
-        private Queue<int> latestPlanningStatus;
+        public Queue<int> latestPlanningStatus;
         //private int previousPlanningStatus;
 
-
-        public Queue<int> LatestPlanningStatus
-        {
-            get 
-            {
-                return latestPlanningStatus;
-            }            
-        }
+        
 
 /*
         public int PreviousPlanningStatus
@@ -162,6 +155,7 @@ namespace RosBridge_old
 
             rosMessageStrings = new Queue<string>();			// Incoming message queue
             rosCommandQueue = new Queue<RosMessage_old>();          // Outgoing message queue
+            latestPlanningStatus = new Queue<int>();
 
             rosMessageConverter = new RosMessageConverter();    // Deserializer of incoming ROSmessages
 
@@ -447,7 +441,7 @@ namespace RosBridge_old
         // if (RosBridgeClient_old.handTrackingAprilTags) {        
         // Send(new RosSubscribe_old("/handDirectionPointer", "std_msgs/Float32MultiArray"));            
         // }            
-            Send(new RosSubscribe_old("/hololens/state", "std_msgs/Int32", 1)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0        
+            Send(new RosSubscribe_old("/hololens/state", "std_msgs/Int32", 0)); //the minimum amount of time (in ms) that must elapse between messages being sent. Defaults to 0        
 #endif
         }
 
@@ -731,13 +725,13 @@ namespace RosBridge_old
                 latestJointState.position = positions;                
             }
             
-            else if (message.Contains("hololens/state")){
-                //messageCount++;
+            else if (message.Contains("hololens/state")){                
                 jsonObject = JsonObject.Parse(message);
 
                 //previousPlanningStatus = latestPlanningStatus;
-                latestPlanningStatus.enqueue((int) jsonObject["msg"].GetObject()["val"].GetNumber());
-
+                int status = (int) jsonObject["msg"].GetObject()["val"].GetNumber();
+                latestPlanningStatus.Enqueue(status);
+                //messageCount = latestPlanningStatus.Count;
                 //latestPlanningStatus = (int) 
                 //jsonObject["msg"].GetObject()["data"].GetNumber();
                 //TODO show planning results in a temporary message
@@ -770,9 +764,9 @@ namespace RosBridge_old
             //     //Vector3 direction = new Vector3((float)jdarray[3].GetNumber(), (float)jdarray[4].GetNumber(), (float)jdarray[5].GetNumber());
 
             // }
-#endif
+#endif            
         }
-
+        
 #if WINDOWS_UWP
         // hier wird einfach hart-gecoded eine JointState-Nachricht deserialisiert
         public RosMessage DeserializeJSONstring(string message)

@@ -6,10 +6,10 @@ using System;
 public class ExecutePlace_State : ExperimentState
 {    
     [SerializeField]
-    Text text;   
+    Text text;
 
     [SerializeField]
-    RosBridge_old.RosBridgeClient_old rosbridgeClient;
+    ros2unityManager rum;
 
     bool next = false;
 
@@ -24,19 +24,20 @@ public class ExecutePlace_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {
-        if(next)
+        if (rum.RosBridge.latestPlanningStatus.Count > 0)
         {
-            next = false;
-            return nextStates[0]; //idle
+            int status = rum.RosBridge.latestPlanningStatus.Dequeue();
+            if (status == RosMessages_old.std_msgs.Int32_old.IDLE)
+            {
+                return nextStates[0]; //idle
+            }            
         }
-        else
-        {
-            return this;
-        }        
+
+        return this;           
     }
 
     public override void UpdateState(ExperimentController ec)
     {     
-        text.text = "executing";        
+        text.text = "executing place";        
     }
 }

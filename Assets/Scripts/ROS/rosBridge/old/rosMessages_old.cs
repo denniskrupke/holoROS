@@ -126,7 +126,7 @@ namespace RosMessages_old{
             public const int IDLE = 3;
             public const int PLANNED_PICK = 4;
             public const int HOLD_OBJECT = 5;
-            public const int PLANNED_PLACE = 6;
+            public const int PLANNED_PLACE = 6;            
             public const int ERROR = -99;
 
             public int data;
