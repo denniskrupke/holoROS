@@ -17,6 +17,8 @@ public class PlanningPick_State : ExperimentState
     [SerializeField]
     FadingNotification fn;
 
+    string ms = "planning pick";
+
     bool next = false;
 
     public override bool GetNext(){
@@ -29,62 +31,30 @@ public class PlanningPick_State : ExperimentState
     }
 
     public override ExperimentState HandleInput(ExperimentController ec)
-    {             
-        if (rum.RosBridge.latestPlanningStatus == null) {            
-            return this;
-        }        
-
-        if (rum.RosBridge.latestPlanningStatus.Count > 0){         
+    {
+        if (rum.RosBridge.latestPlanningStatus.Count > 0)
+        {
             int status = rum.RosBridge.latestPlanningStatus.Dequeue();
-            if(status == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){
-                // TODO show fail message here
-                fn.ShowMessage("FAIL", new Color(1, 0, 0));                
-                if (ec.PreviousState.GetType() == typeof(PlannedPick_State)){
-                    nextStateIndex = 1; //PlannedPick
-                    next = true;                    
-                }
-                else {
-                    nextStateIndex = 0; //Idle
-                    next = true;                    
-                }
+            if (status == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED)
+            {
+                fn.ShowMessage("FAIL", new Color(1, 0, 0));
+                if (ec.PreviousState.GetType() == typeof(PlannedPick_State))
+                    return nextStates[1]; //PlannedPick                   
+                return nextStates[0]; //Idle
             }
-            else if(status == RosMessages_old.std_msgs.Int32_old.SUCCESS){
-                // TODO show success message here                
+            else if (status == RosMessages_old.std_msgs.Int32_old.SUCCESS)
+            {                               
                 fn.ShowMessage("SUCCESS", new Color(0, 1, 0));
+                return nextStates[1];
             }
-            else if (status == RosMessages_old.std_msgs.Int32_old.PLANNED_PICK){                
-                nextStateIndex = 1; //PlannedPick
-                next = true;
-            }
-        }        
-
-        if(next)
-        {
-            next = false;
-            return nextStates[nextStateIndex];
+            else ms = "wrong state -> exit all";
         }
-        else
-        {
-            return this;
-        }    
-
-/*
-        if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){            
-            if (ec.PreviousState.GetType() == typeof(PlannedPick_State)){                
-                return nextStates[1]; //PlannedPick
-            }
-            else return nextStates[0]; //Idle
-        }
-        else if(rosbridgeClient.LatestPlanningStatus == RosMessages_old.std_msgs.Int32_old.SUCCESS){
-            return nextStates[1]; //PlannedPick
-        }
-        else return this;        
-        */
+        return this;                  
     }
 
     public override void UpdateState(ExperimentController ec)
     {        
-        text.text = "planning pick";
+        text.text = ms;
         tableTopCollider.enabled = false;        
     }
 }

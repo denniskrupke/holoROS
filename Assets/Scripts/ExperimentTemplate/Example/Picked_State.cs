@@ -25,11 +25,8 @@ public class Picked_State : ExperimentState
         {
             next = false;
             return nextStates[0]; //planningPlace
-        }
-        else
-        {
-            return this;
         }        
+        return this;                
     }
 
     public override void UpdateState(ExperimentController ec)

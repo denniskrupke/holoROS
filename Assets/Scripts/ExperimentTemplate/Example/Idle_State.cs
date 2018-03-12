@@ -35,15 +35,14 @@ public class Idle_State : ExperimentState
             int status = rum.RosBridge.latestPlanningStatus.Dequeue();
             if (status != RosMessages_old.std_msgs.Int32_old.IDLE) { ms = "wrong state -> exit all"; }            
         }
+
         if (next)
         {
             next = false;
             return nextStates[0];//planning pick
-        }
-        else
-        {
-            return this;
-        }        
+        }  
+              
+        return this;               
     }
 
     public override void UpdateState(ExperimentController ec)

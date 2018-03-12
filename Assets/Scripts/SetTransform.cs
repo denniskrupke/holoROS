@@ -39,20 +39,21 @@ public class SetTransform : MonoBehaviour {
 		
 	}
 
-    public void OnPickUp(){        
+    public void OnPickUp(){
+        Vector3 invPos = objectSelectionManager.CurrentSelectedObject.transform.InverseTransformPoint(cursor.transform.position);
         //object1, object2, object3
         //this.transform.position = new Vector3(objectSelectionManager.CurrentSelectedObject.transform.position.x, cursor.transform.position.y, objectSelectionManager.CurrentSelectedObject.transform.position.z);
         Vector3 cursor_pos = cursor.transform.position;
         targetMarker.position = cursor_pos;
-        Vector3 target_pos = objectSelectionManager.CurrentSelectedObject.transform.position;
+        //Vector3 target_pos = objectSelectionManager.CurrentSelectedObject.transform.position;
         //Vector3 invPos = objectSelectionManager.CurrentSelectedObject.transform.InverseTransformPoint(cursor.transform.position);
-        Vector3 invPos = cursor_pos - target_pos;        
+        //Vector3 invPos = cursor_pos - target_pos;        
         //float[] data = { invPos.x, -invPos.z, invPos.y };
         RosMessages_old.geometry_msgs.PointStamped_old ps = new RosMessages_old.geometry_msgs.PointStamped_old();        
         RosMessages_old.geometry_msgs.Point_old p = new RosMessages_old.geometry_msgs.Point_old();        
         ps.point = p;        
-        ps.point.x = invPos.x; 
-        ps.point.y = invPos.z; 
+        ps.point.x = invPos.z; 
+        ps.point.y = -invPos.x; 
         ps.point.z = invPos.y;        
         Header_old h = new Header_old();        
         ps.header = h;        
@@ -63,18 +64,19 @@ public class SetTransform : MonoBehaviour {
 
     public void OnPlace()
     {
+        Vector3 invPos = tableTop.transform.InverseTransformPoint(cursor.transform.position);
         //targetMarker.position = cursor.transform.position;
         // TODO
         this.lastPlacePos = cursor.transform.position;
         lastPlacePos.y += 0.129f;
         objectWithTargetMarker.transform.position = lastPlacePos;
 
-        Vector3 invPos = cursor.transform.position - tableTop.position;
+        //Vector3 invPos = cursor.transform.position - tableTop.position;
         RosMessages_old.geometry_msgs.PointStamped_old ps = new RosMessages_old.geometry_msgs.PointStamped_old();
         RosMessages_old.geometry_msgs.Point_old p = new RosMessages_old.geometry_msgs.Point_old();
         ps.point = p;
-        ps.point.x = invPos.z;      //TODO check the order of the coordinates!!!
-        ps.point.y = -invPos.y;
+        ps.point.x = invPos.z;
+        ps.point.y = -invPos.x;      //TODO check the order of the coordinates!!!        
         ps.point.z = invPos.y;
         Header_old h = new Header_old();
         ps.header = h;        

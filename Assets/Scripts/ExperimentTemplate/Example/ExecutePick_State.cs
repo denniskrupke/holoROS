@@ -27,19 +27,14 @@ public class ExecutePick_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {        
-        if(rum.RosBridge.latestPlanningStatus.Count > 0){
+        if (rum.RosBridge.latestPlanningStatus.Count > 0)
+        {
             int status = rum.RosBridge.latestPlanningStatus.Dequeue();
-            if(status == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT) next = true; //picked
+            if (status == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT)
+                return nextStates[0]; //picked
         }
-
-        if(next)
-        {
-            return nextStates[0];//picked
-        }
-        else
-        {
-            return this;
-        }        
+        
+        return this;               
     }
 
     public override void UpdateState(ExperimentController ec)

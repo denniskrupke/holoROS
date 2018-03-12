@@ -20,6 +20,8 @@ public class PlanningPlace_State : ExperimentState
 
     bool next = false;
 
+    string ms = "planning place";
+
     public override bool GetNext(){
         return next;
     }
@@ -34,42 +36,24 @@ public class PlanningPlace_State : ExperimentState
 
         if(rum.RosBridge.latestPlanningStatus.Count > 0){
             int status = rum.RosBridge.latestPlanningStatus.Dequeue();
-            if(status == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){
-                // TODO show fail message here
+            if(status == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){                
                 fn.ShowMessage("FAIL", new Color(1, 0, 0));
-                if (ec.PreviousState.GetType() == typeof(PlannedPlace_State)){
-                    nextStateIndex = 1; //PlannedPlace
-                    next = true;
-                }
-                else {
-                    nextStateIndex = 0; //Picked
-                    next = true;
-                }
+                if (ec.PreviousState.GetType() == typeof(PlannedPlace_State))
+                    return nextStates[1]; //PlannedPlace                                    
+                return nextStates[0]; //Picked                                    
             }
-            else if(status == RosMessages_old.std_msgs.Int32_old.SUCCESS){
-                // TODO show success message here
+            else if(status == RosMessages_old.std_msgs.Int32_old.SUCCESS){                
                 fn.ShowMessage("SUCCESS", new Color(0,1,0));
+                return nextStates[1]; //PlannedPlace                
             }
-            else if (status == RosMessages_old.std_msgs.Int32_old.PLANNED_PLACE){
-                nextStateIndex = 1; //PlannedPlace
-                next = true;
-            }
+            else  ms = "wrong state -> exit all"; 
         }
-
-        if(next)
-        {
-            next = false;
-            return nextStates[nextStateIndex];
-        }
-        else
-        {
-            return this;
-        }    
+        return this; 
     }
 
     public override void UpdateState(ExperimentController ec)
     {       
-        text.text = "planning place";
+        text.text = ms;
         tableTopCollider.enabled = true;        
     }
 }
