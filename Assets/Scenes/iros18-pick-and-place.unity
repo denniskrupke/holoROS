@@ -14832,14 +14832,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cursor: {fileID: 1839633373}
-  origin: {fileID: 1178374292}
   rosManager: {fileID: 1060737723}
   objectSelectionManager: {fileID: 147976925}
-  startingPosition: {fileID: 941038137}
-  experimentDataLogger: {fileID: 0}
-  debugHUD: {fileID: 1905244184}
-  speechManager: {fileID: 1060737717}
-  targetPositioner: {fileID: 1183644862}
   targetMarker: {fileID: 1628275167}
   tableTop: {fileID: 756703282}
 --- !u!43 &1779138867
@@ -15453,11 +15447,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80b605309bdd874987c5c65fa5c1cae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handsTrackingManager: {fileID: 0}
-  lineRenderer: {fileID: 0}
-  rosManager: {fileID: 0}
-  origin: {fileID: 1178374292}
+  handsTrackingManager: {fileID: 1060737722}
+  rosManager: {fileID: 1060737723}
   selectionManager: {fileID: 147976925}
+  lineRenderer: {fileID: 0}
 --- !u!4 &1839633375 stripped
 Transform:
   m_PrefabParentObject: {fileID: 470424, guid: c8685776cafe5d24493303e077fffcfb, type: 2}

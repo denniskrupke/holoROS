@@ -72,7 +72,7 @@ public class WorldCursor : MonoBehaviour
                 if (hitInfo.transform.gameObject.name != "tabletop")
                 {                  
                     selectionManager.LastSelectedObject = selectionManager.CurrentSelectedObject;  
-                    selectionManager.CurrentSelectedObject = hitInfo.transform.gameObject.transform.parent;
+                    selectionManager.CurrentSelectedObject = hitInfo.transform.parent.gameObject;
                 }
                 
                 this.transform.position = hitInfo.point;// = hitInfo.point;

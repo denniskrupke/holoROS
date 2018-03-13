@@ -34,8 +34,8 @@ using Newtonsoft.Json;
 namespace RosBridge_old
 {
 
-    class RosBridgeClient_old {        
-        public static readonly string ROSBRIDGE_IP = "134.100.13.122";//"134.100.13.158";////"134.100.13.202"; //Real UR-5
+    class RosBridgeClient_old {
+        public static readonly string ROSBRIDGE_IP = "134.100.13.223";//"134.100.13.122";//"134.100.13.158";////"134.100.13.202"; //Real UR-5
         public static readonly string ROSBRIDGE_PORT = "9090";        
 
 
