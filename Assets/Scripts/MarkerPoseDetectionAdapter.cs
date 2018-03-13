@@ -16,6 +16,9 @@ public class MarkerPoseDetectionAdapter : MonoBehaviour {
     Vector3 startMarkerForward;    
     Vector3 scaleYToZero = new Vector3(1, 0, 1);
 
+    [SerializeField]
+    ManageObjectSelection mos;
+
     // Use this for initialization
     void Start () {
         startRot = transform.rotation;
@@ -42,6 +45,7 @@ public class MarkerPoseDetectionAdapter : MonoBehaviour {
             {
                 configurationManager.registration_calibration = false;
                 count = 0;
+                mos.RememberPositions();
             }
         }
 

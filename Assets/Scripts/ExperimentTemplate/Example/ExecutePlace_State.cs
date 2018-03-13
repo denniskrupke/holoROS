@@ -28,7 +28,9 @@ public class ExecutePlace_State : ExperimentState
         {
             int status = rum.RosBridge.latestPlanningStatus.Dequeue();
             if (status == RosMessages_old.std_msgs.Int32_old.IDLE)
-                return nextStates[0]; //idle                       
+                return nextStates[0]; //idle 
+            else if (status == RosMessages_old.std_msgs.Int32_old.ERROR)                            
+                return nextStates[1]; //error            
         }
 
         return this;           

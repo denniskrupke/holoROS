@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System;
 
 public class StateController : ExperimentController {
+    [SerializeField]
+    Error_State errorState;
     
 
     // Use this for initialization
@@ -22,6 +24,12 @@ public class StateController : ExperimentController {
     protected override void FillTrials()
     {
          
+    }
+
+    public void GoToReset()
+    {
+        currentState = errorState;
+        errorState.SendResetMessage();          
     }
     
 }

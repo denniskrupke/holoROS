@@ -1,12 +1,32 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class ManageObjectSelection : MonoBehaviour {
     private GameObject lastSelectedObject = null;
     private GameObject currentSelectedObject = null;
+
+    Dictionary<string, Vector3> initialObjectPositions;
 	// Use this for initialization
 	void Start () {
-		
+        initialObjectPositions = new Dictionary<string, Vector3>();
+        RememberPositions();
 	}
+
+    public void RememberPositions()
+    {        
+        foreach (Transform t in transform)
+        {
+            initialObjectPositions.Add(t.name, t.position);
+        }
+    }
+
+    public void ResetPositions()
+    {
+        foreach (Transform t in transform)
+        {
+            t.position = initialObjectPositions[t.name];
+        }           
+    }
 	
 	// Update is called once per frame
 	void Update () {

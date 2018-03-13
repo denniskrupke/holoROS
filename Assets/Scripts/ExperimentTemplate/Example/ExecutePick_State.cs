@@ -12,7 +12,10 @@ public class ExecutePick_State : ExperimentState
     ros2unityManager rum;
 
     [SerializeField]
-    Collider tableTopCollider;  
+    Collider tableTopCollider;
+
+    [SerializeField]
+    StateController sc;
 
     bool next = false;
 
@@ -32,6 +35,8 @@ public class ExecutePick_State : ExperimentState
             int status = rum.RosBridge.latestPlanningStatus.Dequeue();
             if (status == RosMessages_old.std_msgs.Int32_old.HOLD_OBJECT)
                 return nextStates[0]; //picked
+            else if(status == RosMessages_old.std_msgs.Int32_old.ERROR)            
+                return nextStates[1]; //error                   
         }
         
         return this;               

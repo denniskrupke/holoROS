@@ -18,6 +18,12 @@ public class PlanningPlace_State : ExperimentState
     [SerializeField]
     FadingNotification fn;
 
+    [SerializeField]
+    SetTransform setTransform;
+
+    [SerializeField]
+    ManageObjectSelection mos;
+
     bool next = false;
 
     string ms = "planning place";
@@ -33,11 +39,11 @@ public class PlanningPlace_State : ExperimentState
 
     public override ExperimentState HandleInput(ExperimentController ec)
     {
-
         if(rum.RosBridge.latestPlanningStatus.Count > 0){
             int status = rum.RosBridge.latestPlanningStatus.Dequeue();
             if(status == RosMessages_old.std_msgs.Int32_old.PLANNING_FAILED){                
                 fn.ShowMessage("FAIL", new Color(1, 0, 0));
+                mos.CurrentSelectedObject.transform.position = setTransform.GetBackToPreviousPlacePos();
                 if (ec.PreviousState.GetType() == typeof(PlannedPlace_State))
                     return nextStates[1]; //PlannedPlace                                    
                 return nextStates[0]; //Picked                                    

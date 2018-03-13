@@ -27,6 +27,7 @@ public class SetTransform : MonoBehaviour {
     public Transform tableTop = null;
 
     private Vector3 lastPlacePos;
+    private Vector3 previousPlacePos;
     private GameObject objectWithTargetMarker = null;
     
 	// Use this for initialization
@@ -41,6 +42,8 @@ public class SetTransform : MonoBehaviour {
 
     public void OnPickUp(){
         Vector3 invPos = objectSelectionManager.CurrentSelectedObject.transform.InverseTransformPoint(cursor.transform.position);
+        previousPlacePos = objectSelectionManager.CurrentSelectedObject.transform.position;
+        lastPlacePos = objectSelectionManager.CurrentSelectedObject.transform.position;
         //object1, object2, object3
         //this.transform.position = new Vector3(objectSelectionManager.CurrentSelectedObject.transform.position.x, cursor.transform.position.y, objectSelectionManager.CurrentSelectedObject.transform.position.z);
         Vector3 cursor_pos = cursor.transform.position;
@@ -67,6 +70,7 @@ public class SetTransform : MonoBehaviour {
         Vector3 invPos = tableTop.transform.InverseTransformPoint(cursor.transform.position);
         //targetMarker.position = cursor.transform.position;
         // TODO
+        this.previousPlacePos = this.lastPlacePos;
         this.lastPlacePos = cursor.transform.position;
         lastPlacePos.y += 0.129f;
         objectWithTargetMarker.transform.position = lastPlacePos;
@@ -92,6 +96,12 @@ public class SetTransform : MonoBehaviour {
     {
         RosMessages_old.std_msgs.Empty_old confirm = new RosMessages_old.std_msgs.Empty_old();
         rosManager.RosBridge.EnqueRosCommand(new RosPublish_old("/hololens/execute_place", confirm));
+    }
+
+    public Vector3 GetBackToPreviousPlacePos()
+    {
+        this.lastPlacePos = previousPlacePos;
+        return previousPlacePos;
     }
 
 
@@ -162,3 +172,4 @@ public class SetTransform : MonoBehaviour {
     }
     */
 }
+

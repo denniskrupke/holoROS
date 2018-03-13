@@ -10,7 +10,6 @@ public class ConfigurationManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void Update () {		
 	}
 }

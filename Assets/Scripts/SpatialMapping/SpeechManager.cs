@@ -16,13 +16,22 @@ public class SpeechManager : MonoBehaviour
 
     [SerializeField]
     StateController sc;
- 
+
+    [SerializeField]
+    ManageObjectSelection mos;
+
     void Start()
     {                
         keywords.Add("Calibrate", () =>
         {           
             this.configurationManager.registration_calibration = true;
-            lastCommand = "Calibrate"; 
+            lastCommand = "Calibrate";            
+        });
+
+        keywords.Add("Detect", () =>
+        {
+            this.configurationManager.registration_calibration = true;
+            lastCommand = "Calibrate";            
         });
 
         keywords.Add("Pick", () =>
@@ -37,21 +46,18 @@ public class SpeechManager : MonoBehaviour
 
         keywords.Add("Execute", () =>
         {
-            // Triggers execution of previously planned actions            
-            if (sc.CurrentState.GetType() == typeof(PlannedPick_State))
-            {
-                this.setTransform.OnConfirmPick();
-                sc.CurrentState.SetNext(true);
-            }
-            else if (sc.CurrentState.GetType() == typeof(PlannedPlace_State))
-            {
-                this.setTransform.OnConfirmPlace();
-                sc.CurrentState.SetNext(true);
-            }
-            
-            lastCommand = "Execute";            
+            _execute();        
         });
-       
+
+        keywords.Add("Confirm", () =>
+        {
+            _execute();
+        });
+
+        keywords.Add("Reset", () =>
+        {            
+            sc.GoToReset();
+        });
 
         keywords.Add("Place", () =>
         {
@@ -78,6 +84,23 @@ public class SpeechManager : MonoBehaviour
         {
             keywordAction.Invoke();
         }
+    }
+
+    void _execute()
+    {
+        // Triggers execution of previously planned actions            
+        if (sc.CurrentState.GetType() == typeof(PlannedPick_State))
+        {
+            this.setTransform.OnConfirmPick();
+            sc.CurrentState.SetNext(true);
+        }
+        else if (sc.CurrentState.GetType() == typeof(PlannedPlace_State))
+        {
+            this.setTransform.OnConfirmPlace();
+            sc.CurrentState.SetNext(true);
+        }
+
+        lastCommand = "Execute";
     }
 
     void OnQuit()
