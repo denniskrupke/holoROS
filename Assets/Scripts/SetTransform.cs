@@ -15,14 +15,14 @@ using RosMessages;
 
 public class SetTransform : MonoBehaviour {
     public GameObject cursor;
-    public Transform origin;
+    // public Transform origin;
     public ros2unityManager rosManager;
     public ManageObjectSelection objectSelectionManager = null;
-    public Transform startingPosition;
-    public ExperimentDataLogger experimentDataLogger = null;
-    public Text debugHUD = null;
-    public SpeechManager speechManager = null;
-    public ParticipantTargetPositioner targetPositioner = null;
+    // public Transform startingPosition;
+    // public ExperimentDataLogger experimentDataLogger = null;
+    // public Text debugHUD = null;
+    // public SpeechManager speechManager = null;
+    // public ParticipantTargetPositioner targetPositioner = null;
     public Transform targetMarker = null;
     public Transform tableTop = null;
 

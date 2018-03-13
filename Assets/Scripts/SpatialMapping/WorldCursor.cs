@@ -5,64 +5,45 @@ public class WorldCursor : MonoBehaviour
     public HoloToolkit.Unity.HandsTrackingManager handsTrackingManager;
     private int mode = 0;
     private int numOfModes = 2;
-    private GameObject lastObjectHit = null;
-    public LineRenderer lineRenderer = null;
+    //private GameObject lastObjectHit = null;
     public ros2unityManager rosManager = null;
-    public Transform origin;
-    //private Transform markerTransform;
-    private Vector3 markerPosition;
+    // public Transform origin;
     public ManageObjectSelection selectionManager = null;
-    // private MeshRenderer meshRenderer;    
+
+    // handmarker-specific variables
+    public LineRenderer lineRenderer = null;
+    private Vector3 markerPosition;
+
+    RaycastHit hitInfo;
+    Vector3 headPosition;
+    Vector3 gazeDirection;
 
     // Use this for initialization
     void Start()
-    {
-        // Grab the mesh renderer that's on the same object as this script.
-        //meshRenderer = this.gameObject.GetComponentInChildren<MeshRenderer>();
+    {        
         markerPosition = new Vector3(0, 0, 0);
     }
 
     private void Update()
-    {
-        /*
-        if (Input.GetKey(KeyCode.A)) 
-        {
-            this.mode = 0;
-        }
-        else if (Input.GetKey(KeyCode.B))
-        {
-            this.mode = 1;
-        }
-        */
+    {        
     }
 
     // Update is called once per frame
     void LateUpdate()
-    {
-        
+    {        
         // Do a raycast into the world based on the user's
         // head position and orientation.
-        var headPosition = Camera.main.transform.position;
-        var gazeDirection = Camera.main.transform.forward;
-
-
-        RaycastHit hitInfo;
+        headPosition = Camera.main.transform.position;
+        gazeDirection = Camera.main.transform.forward;
+        
 
         if (mode == 1) //hand pointing based
         {
             if (Physics.Raycast(headPosition, handsTrackingManager.GetLastDirection(), out hitInfo))
             //if (Physics.Raycast(headPosition, gazeDirection, out hitInfo,
             //            30.0f, SpatialMapping.PhysicsRaycastMask))
-            {
-                /*
-                // If the raycast hit a hologram...                
-                if (lastObjectHit)
-                {
-                    lastObjectHit.GetComponent<Renderer>().material.color = Color.green;
-                    hitInfo.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
-                }
-                */
-                lastObjectHit = hitInfo.transform.gameObject;
+            {                
+                // lastObjectHit = hitInfo.transform.gameObject;
                 selectionManager.LastSelectedObject = selectionManager.CurrentSelectedObject;
                 selectionManager.CurrentSelectedObject = hitInfo.transform.gameObject;
                 // Move the cursor to the point where the raycast hit.
@@ -82,29 +63,20 @@ public class WorldCursor : MonoBehaviour
                 selectionManager.CurrentSelectedObject = null;
             }
         }
+
         else if (mode == 0) //gaze based
         {
             if (Physics.Raycast(headPosition, gazeDirection, out hitInfo))
-            {         
-                /*      
-                if (lastObjectHit)
-                {
-                    lastObjectHit.GetComponent<Renderer>().material.color = Color.green;
-                    hitInfo.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
-                }
-                */
-                
-                lastObjectHit = hitInfo.transform.gameObject;
-                selectionManager.LastSelectedObject = selectionManager.CurrentSelectedObject;
-
+            {                         
+                // lastObjectHit = hitInfo.transform.gameObject;                
                 if (hitInfo.transform.gameObject.name != "tabletop")
-                {                    
-                    selectionManager.CurrentSelectedObject = hitInfo.transform.gameObject;
+                {                  
+                    selectionManager.LastSelectedObject = selectionManager.CurrentSelectedObject;  
+                    selectionManager.CurrentSelectedObject = hitInfo.transform.gameObject.transform.parent;
                 }
                 
                 this.transform.position = hitInfo.point;// = hitInfo.point;
-                this.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);
-                
+                this.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);                
             }
             else
             {
@@ -118,6 +90,7 @@ public class WorldCursor : MonoBehaviour
                 selectionManager.CurrentSelectedObject = null;
             }
         }
+
         else if (mode == 2) //april tag based hand tracking (pointing direction)
         {
             //markerTransform.position = origin.transform.TransformPoint(this.rosManager.RosBridge.GetLatestHandPosition());
@@ -128,7 +101,6 @@ public class WorldCursor : MonoBehaviour
             lineRenderer.SetPosition(0, this.markerPosition);
             lineRenderer.SetPosition(1, this.markerPosition + this.rosManager.RosBridge.GetLatestPointingDirection()); //1 * origin.transform.TransformPoint(this.rosManager.RosBridge.GetLatestPointingDirection()));
             
-            
             if (Physics.Raycast(this.markerPosition, this.rosManager.RosBridge.GetLatestPointingDirection(), out hitInfo)) {        
                 /*                        
                 if (lastObjectHit)
@@ -137,7 +109,7 @@ public class WorldCursor : MonoBehaviour
                     hitInfo.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
                 }
                 */
-                lastObjectHit = hitInfo.transform.gameObject;
+                // lastObjectHit = hitInfo.transform.gameObject;
                 selectionManager.LastSelectedObject = selectionManager.CurrentSelectedObject;
                 selectionManager.CurrentSelectedObject = hitInfo.transform.gameObject;
                 this.transform.position = hitInfo.point;// = hitInfo.point;
@@ -153,10 +125,8 @@ public class WorldCursor : MonoBehaviour
                 //if (lastObjectHit) lastObjectHit.GetComponent<Renderer>().material.color = Color.green;
                 if (selectionManager.CurrentSelectedObject) selectionManager.LastSelectedObject = selectionManager.CurrentSelectedObject;
                 selectionManager.CurrentSelectedObject = null;
-            }
-            
+            }   
         }
-        
    }
 
    public void ChangeMode()
