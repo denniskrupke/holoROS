@@ -9,14 +9,17 @@ public class ManageObjectSelection : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         initialObjectPositions = new Dictionary<string, Vector3>();
-        RememberPositions();
+        foreach (Transform t in transform)
+        {
+            initialObjectPositions.Add(t.name, t.position);
+        }        
 	}
 
     public void RememberPositions()
     {        
         foreach (Transform t in transform)
         {
-            initialObjectPositions.Add(t.name, t.position);
+            initialObjectPositions[t.name] = t.position;
         }
     }
 

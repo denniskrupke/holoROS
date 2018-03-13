@@ -48,15 +48,6 @@ public class MarkerPoseDetectionAdapter : MonoBehaviour {
                 mos.RememberPositions();
             }
         }
-
-        /*
-        if (count++ > 100)
-        {
-            //text.text = "\n x:" + markerAnker.up.x + "y:" + markerAnker.up.y + "z:" + markerAnker.up.z + ";\n x:" + euler.x + "y:" + euler.y + "z:" + euler.z + text.text;
-            //text.text = "\n x:" + newMarkerForward.x + "y:" + newMarkerForward.y + "z:" + newMarkerForward.z + ";\n x:" + startMarkerForward.x + "y:" + startMarkerForward.y + "z:" + startMarkerForward.z + text.text;
-            count = 0;
-        }
-       */
     }
  
 }
