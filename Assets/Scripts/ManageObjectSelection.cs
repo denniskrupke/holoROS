@@ -6,12 +6,18 @@ public class ManageObjectSelection : MonoBehaviour {
     private GameObject currentSelectedObject = null;
 
     Dictionary<string, Vector3> initialObjectPositions;
-	// Use this for initialization
-	void Start () {
+    //Dictionary<string, Quaternion> initialObjectRotations;
+
+    [SerializeField]
+    Transform tabletopAnker;
+    // Use this for initialization
+    void Start () {
         initialObjectPositions = new Dictionary<string, Vector3>();
+        //initialObjectRotations = new Dictionary<string, Quaternion>();
         foreach (Transform t in transform)
         {
-            initialObjectPositions.Add(t.name, t.position);
+            initialObjectPositions.Add(t.name, tabletopAnker.InverseTransformPoint(t.position));
+            //initialObjectRotations.Add(t.name, t.rotation);
         }        
 	}
 
@@ -19,7 +25,8 @@ public class ManageObjectSelection : MonoBehaviour {
     {        
         foreach (Transform t in transform)
         {
-            initialObjectPositions[t.name] = t.position;
+            initialObjectPositions[t.name] = tabletopAnker.InverseTransformPoint(t.position);
+            //initialObjectRotations[t.name] = t.rotation;
         }
     }
 
@@ -27,7 +34,8 @@ public class ManageObjectSelection : MonoBehaviour {
     {
         foreach (Transform t in transform)
         {
-            t.position = initialObjectPositions[t.name];
+            t.position = tabletopAnker.TransformPoint(initialObjectPositions[t.name]);
+            //t.rotation = initialObjectRotations[t.name];
         }           
     }
 	

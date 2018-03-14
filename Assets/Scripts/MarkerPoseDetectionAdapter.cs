@@ -19,6 +19,8 @@ public class MarkerPoseDetectionAdapter : MonoBehaviour {
     [SerializeField]
     ManageObjectSelection mos;
 
+    bool rememberPoses = false;
+
     // Use this for initialization
     void Start () {
         startRot = transform.rotation;
@@ -41,13 +43,22 @@ public class MarkerPoseDetectionAdapter : MonoBehaviour {
             newMarkerForward.Scale(scaleYToZero);
 
             this.transform.rotation = startRot * Quaternion.FromToRotation(startMarkerForward, newMarkerForward);
-            if (count++ > 200)
+            if (count++ > 60)
             {
                 configurationManager.registration_calibration = false;
                 count = 0;
-                mos.RememberPositions();
+                rememberPoses = true;
             }
         }
     }
- 
+
+    private void LateUpdate()
+    {
+        if (rememberPoses)
+        {
+            mos.RememberPositions();
+            rememberPoses = false;
+        }
+    }
+
 }

@@ -980,6 +980,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f559d6d344b836142b3150bf76706978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tabletopAnker: {fileID: 756703282}
 --- !u!1 &152250271
 GameObject:
   m_ObjectHideFlags: 0
