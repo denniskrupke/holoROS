@@ -3,7 +3,8 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.VR.WSA.Input;
+using UnityEngine.XR.WSA.Input;
+
 
 
 namespace HoloToolkit.Unity
@@ -38,21 +39,21 @@ namespace HoloToolkit.Unity
 
         void Awake()
         {
-            InteractionManager.SourceDetected += InteractionManager_SourceDetected;
-            InteractionManager.SourceLost += InteractionManager_SourceLost;
-            InteractionManager.SourceUpdated += InteractionManager_SourceUpdated;
+            InteractionManager.InteractionSourceDetectedLegacy += InteractionManager_SourceDetected;
+            InteractionManager.InteractionSourceLostLegacy += InteractionManager_SourceLost;
+            InteractionManager.InteractionSourceUpdatedLegacy += InteractionManager_SourceUpdated;
         }
 
-        private void InteractionManager_SourceUpdated(InteractionSourceState state)
+        private void InteractionManager_SourceUpdated(UnityEngine.XR.WSA.Input.InteractionSourceState state)
         {
             uint id = state.source.id;
             Vector3 pos;
 
-            if (state.source.kind == InteractionSourceKind.Hand)
+            if (state.source.kind == UnityEngine.XR.WSA.Input.InteractionSourceKind.Hand)
             {
                 if (trackingObject.ContainsKey(state.source.id))
                 {
-                    if (state.properties.location.TryGetPosition(out pos))
+                    if (state.sourcePose.TryGetPosition(out pos))
                     {
                         trackingObject[state.source.id].transform.position = pos;
                         objectToMoveByHand.transform.position = pos;
@@ -84,10 +85,10 @@ namespace HoloToolkit.Unity
 
         }
 
-        private void InteractionManager_SourceDetected(InteractionSourceState state)
+        private void InteractionManager_SourceDetected(UnityEngine.XR.WSA.Input.InteractionSourceState state)
         {
             // Check to see that the source is a hand.
-            if (state.source.kind != InteractionSourceKind.Hand)
+            if (state.source.kind != UnityEngine.XR.WSA.Input.InteractionSourceKind.Hand)
             {
                 return;
             }
@@ -96,7 +97,7 @@ namespace HoloToolkit.Unity
             var obj = Instantiate(TrackingObject) as GameObject;
             Vector3 pos;
 
-            if (state.properties.location.TryGetPosition(out pos))
+            if (state.sourcePose.TryGetPosition(out pos))
             {
                 obj.transform.position = pos;
                 
@@ -118,10 +119,10 @@ namespace HoloToolkit.Unity
             trackingObject.Add(state.source.id, obj);
         }
 
-        private void InteractionManager_SourceLost(InteractionSourceState state)
+        private void InteractionManager_SourceLost(UnityEngine.XR.WSA.Input.InteractionSourceState state)
         {
             // Check to see that the source is a hand.
-            if (state.source.kind != InteractionSourceKind.Hand)
+            if (state.source.kind != UnityEngine.XR.WSA.Input.InteractionSourceKind.Hand)
             {
                 return;
             }
@@ -141,9 +142,9 @@ namespace HoloToolkit.Unity
 
         void OnDestroy()
         {
-            InteractionManager.SourceDetected -= InteractionManager_SourceDetected;
-            InteractionManager.SourceLost -= InteractionManager_SourceLost;
-            InteractionManager.SourceUpdated -= InteractionManager_SourceUpdated;
+            InteractionManager.InteractionSourceDetectedLegacy -= InteractionManager_SourceDetected;
+            InteractionManager.InteractionSourceLostLegacy -= InteractionManager_SourceLost;
+            InteractionManager.InteractionSourceUpdatedLegacy -= InteractionManager_SourceUpdated;
         }
     }
 }

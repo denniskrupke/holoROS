@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.VR.WSA;
+
 
 public class SpatialMapping : MonoBehaviour {
 
@@ -21,10 +21,10 @@ public class SpatialMapping : MonoBehaviour {
     private int physicsLayer = 31;
 
     // Handles rendering of spatial mapping meshes.
-    private SpatialMappingRenderer spatialMappingRenderer;
+    private UnityEngine.XR.WSA.SpatialMappingRenderer spatialMappingRenderer;
 
     // Creates/updates environment colliders to work with physics.
-    private SpatialMappingCollider spatialMappingCollider;
+    private UnityEngine.XR.WSA.SpatialMappingCollider spatialMappingCollider;
 
     /// <summary>
     /// Determines if the spatial mapping meshes should be rendered.
@@ -42,11 +42,11 @@ public class SpatialMapping : MonoBehaviour {
             if (drawVisualMeshes)
             {
                 spatialMappingRenderer.visualMaterial = DrawMaterial;
-                spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.Visualization;
+                spatialMappingRenderer.renderState = UnityEngine.XR.WSA.SpatialMappingRenderer.RenderState.Visualization;
             }
             else
             {
-                spatialMappingRenderer.renderState = SpatialMappingRenderer.RenderState.None;
+                spatialMappingRenderer.renderState = UnityEngine.XR.WSA.SpatialMappingRenderer.RenderState.None;
             }
         }
     }
@@ -77,9 +77,9 @@ public class SpatialMapping : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        spatialMappingRenderer = gameObject.GetComponent<SpatialMappingRenderer>();
+        spatialMappingRenderer = gameObject.GetComponent<UnityEngine.XR.WSA.SpatialMappingRenderer>();
         spatialMappingRenderer.surfaceParent = this.gameObject;
-        spatialMappingCollider = gameObject.GetComponent<SpatialMappingCollider>();
+        spatialMappingCollider = gameObject.GetComponent<UnityEngine.XR.WSA.SpatialMappingCollider>();
         spatialMappingCollider.surfaceParent = this.gameObject;
         spatialMappingCollider.layer = physicsLayer;
         PhysicsRaycastMask = 1 << physicsLayer;
