@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="tag36_11_00154" size="0.080000 0.080000" />
+    <ImageTarget name="tag36_11_00000" size="0.162000 0.162000" />
+    <ImageTarget name="tag36_11_00162" size="0.080000 0.080000" />
+    <ImageTarget name="tag36_11_00164" size="0.080000 0.080000" />
+    <ImageTarget name="tag36_11_00128" size="0.080000 0.080000" />
+    <ImageTarget name="uhhIconR_" size="0.100000 0.100000" />
+    <ImageTarget name="logoTAMS" size="0.100000 0.100000" />
+  </Tracking>
+</QCARConfig>

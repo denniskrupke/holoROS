@@ -68,6 +68,16 @@ public class SpeechManager : MonoBehaviour
             lastCommand = "Place";
         });
 
+        keywords.Add("Quit", () =>
+        {
+            Application.Quit();
+        });
+
+        keywords.Add("Exit", () =>
+        {
+            Application.Quit();
+        });
+
 
         // Tell the KeywordRecognizer about our keywords.
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
