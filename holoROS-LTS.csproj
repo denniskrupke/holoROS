@@ -249,6 +249,7 @@
     <Compile Include="Assets\BioIK\Demo\Scripts\CameraController.cs" />
     <Compile Include="Assets\BioIK\Demo\Scripts\Demo.cs" />
     <Compile Include="Assets\BioIK\Demo\Scripts\MouseDrag.cs" />
+    <Compile Include="Assets\clickerManager.cs" />
     <Compile Include="Assets\Common\CameraSettings.cs" />
     <Compile Include="Assets\Common\FrameRateSettings.cs" />
     <Compile Include="Assets\Common\InitErrorHandler.cs" />
@@ -419,6 +420,7 @@
     <Compile Include="Assets\Scripts\Analysis\RenderLocalWorkspaceSphereAsParticles.cs" />
     <Compile Include="Assets\Scripts\Analysis\RenderWorkspaceAsParticles.cs" />
     <Compile Include="Assets\Scripts\ChangeTransform.cs" />
+    <Compile Include="Assets\Scripts\clickerManager.cs" />
     <Compile Include="Assets\Scripts\ConfigurationManager.cs" />
     <Compile Include="Assets\Scripts\Experiment\ExperimentDataLogger.cs" />
     <Compile Include="Assets\Scripts\Experiment\ExperimentFileWriter.cs" />
