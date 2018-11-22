@@ -7,113 +7,55 @@ public class MarkerManager : MonoBehaviour {
 
     //The Vuforia markers
     [SerializeField]
-    private List<GameObject> markers;    
+    List<GameObject> markers;    
 
     //The master marker used as an anker for the world
     [SerializeField]
-    private GameObject objectToTransform;//this is the MainAprilTag
+    GameObject objectToTransform;//this is the MainAprilTag
 
     //The center position of the mounting plate of the robot (the following markers are attached to the corners of this plate)
     [SerializeField]
-    private GameObject mountPlate;
+    GameObject mountPlate;
 
     //----------- The markers in the world --------------
     [SerializeField]
-    private GameObject marker1;
+    GameObject marker1;
 
     [SerializeField]
-    private GameObject marker2;
+    GameObject marker2;
 
     [SerializeField]
-    private GameObject marker3;
+    GameObject marker3;
 
     [SerializeField]
-    private GameObject marker4;
+    GameObject marker4;
     //---------------------------------------------------
 
     [SerializeField]
-    private Text debugText; //this can be used to print some debug information as part of the HUD
+    Text debugText; //this can be used to print some debug information as part of the HUD
 
-    private Vector3 trackedPosition;
-    private Vector3 trackedForwardDirection;
-    private Vector3 trackedUpDirection;
-    private Quaternion startRot;
-    private Vector3 startForward;
+    Vector3 trackedPosition, trackedForwardDirection, trackedUpDirection;    
+    Quaternion inverseStartRot, inverseStartRot1, inverseStartRot2, inverseStartRot3, inverseStartRot4;    
 
-    private Dictionary<string, Vector3> lastPositions;  //positions of the detected markers
-    private Dictionary<string, Vector3> lastForwardDirections; //forward directions of the detected markers
-    private Dictionary<string, Vector3> lastUpDirections; //up directions of the detected markers
-    private Dictionary<string, bool> trackingStatus;
-    private Dictionary<string, bool> validPose;
+    Dictionary<string, Vector3> lastPositions;  //positions of the detected markers
+    Dictionary<string, Vector3> lastForwardDirections; //forward directions of the detected markers
+    Dictionary<string, Vector3> lastUpDirections; //up directions of the detected markers
+    Dictionary<string, bool> trackingStatus;
+    Dictionary<string, bool> validPose;
     
-    private int filterCount = 0;
-    
-    private Vector3 fromPlateToMain;
-    private Vector3 fromM1ToPlate;
-    private Vector3 fromM2ToPlate;
-    private Vector3 fromM3ToPlate;
-    private Vector3 fromM4ToPlate;
+    // we don't want to allign the world on every frame, once per second seems enough
+    int filterCount = 0;
+    [SerializeField] int filterCountMax; //60 works well
 
-    private Vector3 fromPlateToMainForward;
-    private Vector3 fromM1ToPlateForward;
-    private Vector3 fromM2ToPlateForward;
-    private Vector3 fromM3ToPlateForward;
-    private Vector3 fromM4ToPlateForward;
+    Vector3 fromPlateToMain;
+    Vector3 fromM1ToPlate;
+    Vector3 fromM2ToPlate;
+    Vector3 fromM3ToPlate;
+    Vector3 fromM4ToPlate;
 
-    private Vector3 fromPlateToMainUp;
-    private Vector3 fromM1ToPlateUp;
-    private Vector3 fromM2ToPlateUp;
-    private Vector3 fromM3ToPlateUp;
-    private Vector3 fromM4ToPlateUp;
 
-    //Vector3 scaleXZToZero = new Vector3(1, 1, 0);
-
-    //updates poses if markers are currently recognized
-    private void updatePoses()
+    void Start()
     {
-        foreach (GameObject marker in markers)
-        {
-            // the big marker
-            if (marker.transform.parent.name.Contains("000") && trackingStatus["000"])
-            {
-                lastPositions["000"] = marker.transform.position;
-                lastForwardDirections["000"] = marker.transform.forward;
-                lastUpDirections["000"] = marker.transform.up;
-                validPose["000"] = true;
-            }
-            if (marker.transform.parent.name.Contains("128") && trackingStatus["128"])
-            {
-                lastPositions["128"] = marker.transform.position - fromM1ToPlate - fromPlateToMain;
-                lastForwardDirections["128"] = marker.transform.forward - fromM1ToPlateForward - fromPlateToMainForward;
-                lastUpDirections["128"] = marker.transform.up - fromM1ToPlateUp - fromPlateToMainUp;
-                validPose["128"] = true;
-            }
-            if (marker.transform.parent.name.Contains("154") && trackingStatus["154"])
-            {
-                lastPositions["154"] = marker.transform.position - fromM2ToPlate - fromPlateToMain;
-                lastForwardDirections["154"] = marker.transform.forward - fromM1ToPlateForward - fromPlateToMainForward;
-                lastUpDirections["154"] = marker.transform.up - fromM1ToPlateUp - fromPlateToMainUp;
-                validPose["154"] = true;
-            }
-            if (marker.transform.parent.name.Contains("162") && trackingStatus["162"])
-            {
-                lastPositions["162"] = marker.transform.position - fromM3ToPlate - fromPlateToMain;
-                lastForwardDirections["162"] = marker.transform.forward - fromM1ToPlateForward - fromPlateToMainForward;
-                lastUpDirections["162"] = marker.transform.up - fromM1ToPlateUp - fromPlateToMainUp;
-                validPose["162"] = true;
-            }
-            if (marker.transform.parent.name.Contains("164") && trackingStatus["164"])
-            {
-                lastPositions["164"] = marker.transform.position - fromM4ToPlate - fromPlateToMain;
-                lastForwardDirections["164"] = marker.transform.forward - fromM1ToPlateForward - fromPlateToMainForward;
-                lastUpDirections["164"] = lastUpDirections["164"] = marker.transform.up;
-                validPose["164"] = true;
-            }
-            // xyz="0.2255 -0.025 0.032" mount plate            
-        }
-    }
-
-    void Start () {
         //raw positions from vuforia marker detection
         lastPositions = new Dictionary<string, Vector3>();
         lastPositions.Add("000", new Vector3());
@@ -155,40 +97,78 @@ public class MarkerManager : MonoBehaviour {
         validPose.Add("164", false);
 
         //original pose
-        startRot = objectToTransform.transform.rotation;
-        startForward = objectToTransform.transform.forward;
-        //startForward.Scale(scaleXZToZero);
+        //startRot = objectToTransform.transform.rotation;
+        inverseStartRot = Quaternion.Inverse(markers[0].transform.rotation);//Quaternion.Inverse(objectToTransform.transform.rotation);        
+        inverseStartRot1 = Quaternion.Inverse(markers[1].transform.rotation);
+        inverseStartRot2 = Quaternion.Inverse(markers[2].transform.rotation);
+        inverseStartRot3 = Quaternion.Inverse(markers[3].transform.rotation);
+        inverseStartRot4 = Quaternion.Inverse(markers[4].transform.rotation);
 
+        
         //fixed translations between frames, known by static scene geometry
         fromPlateToMain = objectToTransform.transform.InverseTransformPoint(mountPlate.transform.position);
         fromM1ToPlate = mountPlate.transform.InverseTransformPoint(marker1.transform.position);
         fromM2ToPlate = mountPlate.transform.InverseTransformPoint(marker2.transform.position);
         fromM3ToPlate = mountPlate.transform.InverseTransformPoint(marker3.transform.position);
         fromM4ToPlate = mountPlate.transform.InverseTransformPoint(marker4.transform.position);
-
-        //fixed forward rotations between frames, known by static scene geometry
-        fromPlateToMainForward = objectToTransform.transform.InverseTransformDirection(mountPlate.transform.forward);
-        fromM1ToPlateForward = mountPlate.transform.InverseTransformDirection(marker1.transform.forward);
-        fromM2ToPlateForward = mountPlate.transform.InverseTransformDirection(marker2.transform.forward);
-        fromM3ToPlateForward = mountPlate.transform.InverseTransformDirection(marker3.transform.forward);
-        fromM4ToPlateForward = mountPlate.transform.InverseTransformDirection(marker4.transform.forward);
-
-        //fixed up rotations between frames, known by static scene geometry
-        fromPlateToMainUp = objectToTransform.transform.InverseTransformDirection(mountPlate.transform.up);
-        fromM1ToPlateUp = mountPlate.transform.InverseTransformDirection(marker1.transform.up);
-        fromM2ToPlateUp = mountPlate.transform.InverseTransformDirection(marker2.transform.up);
-        fromM3ToPlateUp = mountPlate.transform.InverseTransformDirection(marker3.transform.up);
-        fromM4ToPlateUp = mountPlate.transform.InverseTransformDirection(marker4.transform.up);
     }
+
+
+    //updates poses if markers are currently recognized
+    private void updatePoses()
+    {
+        foreach (GameObject currentMarker in markers)
+        {
+            // the big marker
+            if (currentMarker.transform.parent.name.Contains("000") && trackingStatus["000"])
+            {
+                lastPositions["000"] = currentMarker.transform.position;
+                lastForwardDirections["000"] = inverseStartRot * currentMarker.transform.forward;
+                lastUpDirections["000"] = inverseStartRot * currentMarker.transform.up;
+                validPose["000"] = true;
+            }
+            if (currentMarker.transform.parent.name.Contains("128") && trackingStatus["128"])
+            {
+                lastPositions["128"] = currentMarker.transform.position - fromM1ToPlate - fromPlateToMain;
+                lastForwardDirections["128"] = inverseStartRot1 * currentMarker.transform.forward;// - fromM1ToPlateForward - fromPlateToMainForward;
+                lastUpDirections["128"] = inverseStartRot1 * currentMarker.transform.up;// - fromM1ToPlateUp - fromPlateToMainUp;
+                validPose["128"] = true;
+            }
+            if (currentMarker.transform.parent.name.Contains("154") && trackingStatus["154"])
+            {
+                lastPositions["154"] = currentMarker.transform.position - fromM2ToPlate - fromPlateToMain;
+                lastForwardDirections["154"] = inverseStartRot2 * currentMarker.transform.forward;// - fromM1ToPlateForward - fromPlateToMainForward;
+                lastUpDirections["154"] = inverseStartRot2 * currentMarker.transform.up;// - fromM1ToPlateUp - fromPlateToMainUp;
+                validPose["154"] = true;
+            }
+            if (currentMarker.transform.parent.name.Contains("162") && trackingStatus["162"])
+            {
+                lastPositions["162"] = currentMarker.transform.position - fromM3ToPlate - fromPlateToMain;
+                lastForwardDirections["162"] = inverseStartRot3 * currentMarker.transform.forward;// - fromM1ToPlateForward - fromPlateToMainForward;
+                lastUpDirections["162"] = inverseStartRot3 * currentMarker.transform.up;// - fromM1ToPlateUp - fromPlateToMainUp;
+                validPose["162"] = true;
+            }
+            if (currentMarker.transform.parent.name.Contains("164") && trackingStatus["164"])
+            {
+                lastPositions["164"] = currentMarker.transform.position - fromM4ToPlate - fromPlateToMain;
+                lastForwardDirections["164"] = inverseStartRot4 * currentMarker.transform.forward;// - fromM1ToPlateForward - fromPlateToMainForward;
+                lastUpDirections["164"] = inverseStartRot4 * currentMarker.transform.up;
+                validPose["164"] = true;
+            }
+            // xyz="0.2255 -0.025 0.032" mount plate            
+        }
+    }
+
+    
 	
 	// updates the lab model frame pose according to the last marker detections by calculating mean rotation and translation
 	void Update () {
         updatePoses();        
 
         int count = 0;        
-        trackedPosition = new Vector3(); //position
-        trackedForwardDirection = new Vector3();//forward
-        trackedUpDirection = new Vector3();//up
+        trackedPosition = new Vector3(); //position for calculation of the current average
+        trackedForwardDirection = new Vector3();//forward direction for calculation of the current average
+        trackedUpDirection = new Vector3();//up direction for calculation of the current average
 
         if (trackingStatus["000"])
         {
@@ -236,15 +216,9 @@ public class MarkerManager : MonoBehaviour {
         //debugText.text = "" + "x:" + trackedPosition.x + " y:" + trackedPosition.y + " z:" + trackedPosition.z;
 
         // pose updates are applied once per second
-        if (filterCount++ > 60) {            
+        if (filterCount++ > filterCountMax) {            
             objectToTransform.transform.position = trackedPosition;
-            //trackedDirection.Scale(scaleXZToZero);
-            objectToTransform.transform.rotation = startRot * Quaternion.FromToRotation(new Vector3(0, 1, 0), trackedUpDirection)
-                                                            //* Quaternion.FromToRotation(new Vector3(0, 0, 1), trackedForwardDirection)                                                             
-                                                            * Quaternion.Euler(0, -90, 0)
-                                                            
-                                                            ;//startRot * Quaternion.FromToRotation(startForward, trackedDirection);
-            //objectToTransform.transform.up = trackedUpDirection;
+            objectToTransform.transform.rotation = Quaternion.LookRotation(trackedForwardDirection.normalized, trackedUpDirection.normalized);
             filterCount = 0;
         }
     }        
