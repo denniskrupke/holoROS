@@ -6,6 +6,8 @@ using System;
 public class StateController : ExperimentController {
     [SerializeField]
     Error_State errorState;
+
+    public String lastCommand = "";
     
 
     // Use this for initialization

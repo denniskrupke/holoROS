@@ -249,7 +249,6 @@
     <Compile Include="Assets\BioIK\Demo\Scripts\CameraController.cs" />
     <Compile Include="Assets\BioIK\Demo\Scripts\Demo.cs" />
     <Compile Include="Assets\BioIK\Demo\Scripts\MouseDrag.cs" />
-    <Compile Include="Assets\clickerManager.cs" />
     <Compile Include="Assets\Common\CameraSettings.cs" />
     <Compile Include="Assets\Common\FrameRateSettings.cs" />
     <Compile Include="Assets\Common\InitErrorHandler.cs" />

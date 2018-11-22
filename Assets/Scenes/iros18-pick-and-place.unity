@@ -1962,7 +1962,7 @@ MonoBehaviour:
   - {fileID: 388068566}
   nextStateIndex: 0
   text: {fileID: 1715934550}
-  sm: {fileID: 1060737717}
+  sc: {fileID: 388068573}
   rum: {fileID: 1060737723}
 --- !u!114 &388068568
 MonoBehaviour:
@@ -2020,7 +2020,7 @@ MonoBehaviour:
   - {fileID: 388068569}
   nextStateIndex: 0
   text: {fileID: 1715934550}
-  sm: {fileID: 1060737717}
+  sc: {fileID: 388068573}
   rum: {fileID: 1060737723}
 --- !u!114 &388068571
 MonoBehaviour:
@@ -2072,6 +2072,7 @@ MonoBehaviour:
   currentState: {fileID: 388068572}
   resultsDirectoryPath: results/
   errorState: {fileID: 388068574}
+  lastCommand: 
 --- !u!114 &388068574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6960,7 +6961,6 @@ MonoBehaviour:
   setTransform: {fileID: 1778739117}
   configurationManager: {fileID: 1060737725}
   demoMode: 0
-  lastCommand: 
   sc: {fileID: 388068573}
   mos: {fileID: 147976925}
 --- !u!114 &1060737718
@@ -7036,7 +7036,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1060737716}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dffe6861071d8745ad4265608a1b1ba, type: 3}
+  m_Script: {fileID: 11500000, guid: dab98418a7dd44f4695073341fd76e6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   MessageClicker: {fileID: 164977530}

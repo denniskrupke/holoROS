@@ -12,7 +12,6 @@ public class SpeechManager : MonoBehaviour
     public ConfigurationManager configurationManager = null;
 
     public bool demoMode = false;
-    public string lastCommand = "";
 
     [SerializeField]
     StateController sc;
@@ -22,42 +21,27 @@ public class SpeechManager : MonoBehaviour
 
     void Start()
     {                
-        keywords.Add("Calibrate", () =>
-        {           
-            this.configurationManager.registration_calibration = true;
-            lastCommand = "Calibrate";            
-        });
+        //keywords.Add("Calibrate", () =>
+        //{           
+        //    this.configurationManager.registration_calibration = true;
+        //    lastCommand = "Calibrate";            
+        //});
 
-        keywords.Add("Detect", () =>
-        {
-            this.configurationManager.registration_calibration = true;
-            lastCommand = "Calibrate";            
-        });
+        //keywords.Add("Detect", () =>
+        //{
+        //    this.configurationManager.registration_calibration = true;
+        //    lastCommand = "Calibrate";            
+        //});
 
         keywords.Add("Pick", () =>
         {
             sc.PreviousState = sc.CurrentState;
             // Triggers pick-point extraction, message creation and enqueueing            
             this.setTransform.OnPickUp();
-            lastCommand = "Pick";
+            sc.lastCommand = "Pick";
             if((sc.CurrentState.GetType() == typeof(PlannedPick_State)) || (sc.CurrentState.GetType() == typeof(Idle_State))) sc.CurrentState.SetNext(true);
-//          sc.CurrentState.SetNext(true);
         });
 
-        keywords.Add("Execute", () =>
-        {
-            _execute();        
-        });
-
-        keywords.Add("Confirm", () =>
-        {
-            _execute();
-        });
-
-        keywords.Add("Reset", () =>
-        {            
-            sc.GoToReset();
-        });
 
         keywords.Add("Place", () =>
         {
@@ -65,7 +49,23 @@ public class SpeechManager : MonoBehaviour
             // Triggers place-point extraction, message creation and enqueueing            
             this.setTransform.OnPlace();            
             if((sc.CurrentState.GetType() == typeof(PlannedPlace_State)) || (sc.CurrentState.GetType() == typeof(Picked_State))) sc.CurrentState.SetNext(true);
-            lastCommand = "Place";
+            sc.lastCommand = "Place";
+        });
+
+
+        keywords.Add("Confirm", () =>
+        {
+            _execute();
+        });
+
+        keywords.Add("Execute", () =>
+        {
+            _execute();
+        });
+
+        keywords.Add("Reset", () =>
+        {
+            sc.GoToReset();
         });
 
         keywords.Add("Quit", () =>
@@ -110,7 +110,7 @@ public class SpeechManager : MonoBehaviour
             sc.CurrentState.SetNext(true);
         }
 
-        lastCommand = "Execute";
+        sc.lastCommand = "Execute";
     }
 
     void OnQuit()

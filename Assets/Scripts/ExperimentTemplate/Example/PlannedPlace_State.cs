@@ -11,7 +11,7 @@ public class PlannedPlace_State : ExperimentState
     string ms = "planned place";
 
     [SerializeField]
-    SpeechManager sm;
+    StateController sc;
 
     [SerializeField]
     ros2unityManager rum;
@@ -38,10 +38,10 @@ public class PlannedPlace_State : ExperimentState
 
         if (next)
         {
-            if(sm.lastCommand == "Place"){
+            if(sc.lastCommand == "Place"){
                 nextStateIndex = 0; //planningPlace
             }
-            else if(sm.lastCommand == "Execute"){
+            else if(sc.lastCommand == "Execute"){
                 nextStateIndex = 1; //executePlace
             }
             next = false;

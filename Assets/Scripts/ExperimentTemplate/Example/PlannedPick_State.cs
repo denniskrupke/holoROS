@@ -11,7 +11,7 @@ public class PlannedPick_State : ExperimentState
     string ms = "planned pick";  
 
     [SerializeField]
-    SpeechManager sm;
+    StateController sc;
 
     [SerializeField]
     ros2unityManager rum;
@@ -37,11 +37,11 @@ public class PlannedPick_State : ExperimentState
 
         if (next)
         {
-            if(sm.lastCommand == "Pick"){
+            if(sc.lastCommand == "Pick"){
                 nextStateIndex = 0; //planningPick
                 next = false;
             }
-            else if(sm.lastCommand == "Execute"){
+            else if(sc.lastCommand == "Execute"){
                 nextStateIndex = 1; //executePick
                 next = false;
             }
