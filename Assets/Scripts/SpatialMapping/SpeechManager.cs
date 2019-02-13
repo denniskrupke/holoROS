@@ -9,15 +9,15 @@ public class SpeechManager : MonoBehaviour
     Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
     public GameObject HUD = null;
     public SetTransform setTransform = null;
-    public ConfigurationManager configurationManager = null;
+    //public ConfigurationManager configurationManager = null;
 
     public bool demoMode = false;
 
     [SerializeField]
     StateController sc;
 
-    [SerializeField]
-    ManageObjectSelection mos;
+    //[SerializeField]
+    //ManageObjectSelection mos;
 
     void Start()
     {                

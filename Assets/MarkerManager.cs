@@ -154,8 +154,7 @@ public class MarkerManager : MonoBehaviour {
                 lastForwardDirections["164"] = inverseStartRot4 * currentMarker.transform.forward;// - fromM1ToPlateForward - fromPlateToMainForward;
                 lastUpDirections["164"] = inverseStartRot4 * currentMarker.transform.up;
                 validPose["164"] = true;
-            }
-            // xyz="0.2255 -0.025 0.032" mount plate            
+            }                
         }
     }
 
@@ -215,7 +214,7 @@ public class MarkerManager : MonoBehaviour {
         
         //debugText.text = "" + "x:" + trackedPosition.x + " y:" + trackedPosition.y + " z:" + trackedPosition.z;
 
-        // pose updates are applied once per second
+        // pose updates are applied (60/filterCountMax) per second
         if (filterCount++ > filterCountMax) {            
             objectToTransform.transform.position = trackedPosition;
             objectToTransform.transform.rotation = Quaternion.LookRotation(trackedForwardDirection.normalized, trackedUpDirection.normalized);

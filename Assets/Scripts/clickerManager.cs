@@ -8,6 +8,8 @@ public class clickerManager : MonoBehaviour, IInputClickHandler, IInputHandler{
 
     public GameObject MessageClicker = null;
     public SetTransform setTransform = null;
+    int i = 0;
+
 
 
     [SerializeField]
@@ -20,9 +22,13 @@ public class clickerManager : MonoBehaviour, IInputClickHandler, IInputHandler{
 
     public void OnInputClicked(InputClickedEventData eventData)
     {
+        i++;
+
+        MessageClicker.GetComponent<UnityEngine.UI.Text>().text = i.ToString();
+
         if (sc.CurrentState.GetType() == typeof(Idle_State))
         {
-            MessageClicker.GetComponent<UnityEngine.UI.Text>().text = "pick";
+            MessageClicker.GetComponent<UnityEngine.UI.Text>().text = i.ToString() + " pick";
             sc.PreviousState = sc.CurrentState;
             // Triggers pick-point extraction, message creation and enqueueing            
             this.setTransform.OnPickUp();
@@ -35,7 +41,7 @@ public class clickerManager : MonoBehaviour, IInputClickHandler, IInputHandler{
 
         else if (sc.CurrentState.GetType() == typeof(PlannedPick_State))
         {
-            MessageClicker.GetComponent<UnityEngine.UI.Text>().text = "exec pick";
+            MessageClicker.GetComponent<UnityEngine.UI.Text>().text = i.ToString() + " exec pick";
 
             this.setTransform.OnConfirmPick();
             sc.CurrentState.SetNext(true);
@@ -45,7 +51,7 @@ public class clickerManager : MonoBehaviour, IInputClickHandler, IInputHandler{
 
         else if (sc.CurrentState.GetType() == typeof(Picked_State))
         {
-            MessageClicker.GetComponent<UnityEngine.UI.Text>().text = "place";
+            MessageClicker.GetComponent<UnityEngine.UI.Text>().text =  i.ToString() +" place";
 
             sc.PreviousState = sc.CurrentState;
             // Triggers place-point extraction, message creation and enqueueing            
@@ -59,7 +65,7 @@ public class clickerManager : MonoBehaviour, IInputClickHandler, IInputHandler{
        
         else if (sc.CurrentState.GetType() == typeof(PlannedPlace_State))
         {
-            MessageClicker.GetComponent<UnityEngine.UI.Text>().text = "exec place";
+            MessageClicker.GetComponent<UnityEngine.UI.Text>().text = i.ToString() + " exec place";
 
             this.setTransform.OnConfirmPlace();
             sc.CurrentState.SetNext(true);
