@@ -218,6 +218,7 @@ public class MarkerManager : MonoBehaviour {
         if (filterCount++ > filterCountMax) {            
             objectToTransform.transform.position = trackedPosition;
             objectToTransform.transform.rotation = Quaternion.LookRotation(trackedForwardDirection.normalized, trackedUpDirection.normalized);
+            objectToTransform.transform.Rotate(objectToTransform.transform.forward, 1);//3.25f);
             filterCount = 0;
         }
     }        
